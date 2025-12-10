@@ -40,20 +40,6 @@ struct ReminderDetailView: View {
                         in: Date()...,
                         displayedComponents: [.date, .hourAndMinute]
                     )
-                    
-                    // Quick date buttons
-                    HStack(spacing: 12) {
-                        QuickDateButton(title: "1 hour", date: Date().addingTimeInterval(3600)) {
-                            dueDate = $0
-                        }
-                        QuickDateButton(title: "Tomorrow", date: Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()) {
-                            dueDate = $0
-                        }
-                        QuickDateButton(title: "Next Week", date: Calendar.current.date(byAdding: .weekOfYear, value: 1, to: Date()) ?? Date()) {
-                            dueDate = $0
-                        }
-                    }
-                    .padding(.vertical, 4)
                 } header: {
                     Text("When")
                 }
@@ -177,29 +163,6 @@ struct ReminderDetailView: View {
             
             isSaving = false
         }
-    }
-}
-
-// MARK: - Quick Date Button
-struct QuickDateButton: View {
-    let title: String
-    let date: Date
-    let action: (Date) -> Void
-    
-    var body: some View {
-        Button {
-            action(date)
-        } label: {
-            Text(title)
-                .font(.caption)
-                .fontWeight(.medium)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(Color.blue.opacity(0.1))
-                .foregroundStyle(.blue)
-                .clipShape(Capsule())
-        }
-        .buttonStyle(.plain)
     }
 }
 

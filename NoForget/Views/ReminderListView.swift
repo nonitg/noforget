@@ -33,9 +33,9 @@ struct ReminderListView: View {
                     Button {
                         showingQuickAdd = true
                     } label: {
-                        Image(systemName: "plus.circle.fill")
+                        Image(systemName: "plus")
                             .font(.title2)
-                            .symbolRenderingMode(.hierarchical)
+                            .fontWeight(.semibold)
                     }
                 }
                 
@@ -48,7 +48,7 @@ struct ReminderListView: View {
                 }
             }
             .sheet(isPresented: $showingQuickAdd) {
-                QuickAddView()
+                ReminderDetailView(reminder: nil)
             }
             .sheet(item: $selectedReminder) { reminder in
                 ReminderDetailView(reminder: reminder)
@@ -255,20 +255,73 @@ struct SettingsView: View {
     
     @State private var phoneNumber: String = ""
     @State private var twilioBackendURL: String = ""
-    @State private var showingPhoneHelp = false
     
     var body: some View {
         NavigationStack {
             Form {
-                // Notifications Section
+                // Phone Call Setup Section
                 Section {
+                    // Phone number input
+                    HStack {
+                        Image(systemName: "phone.fill")
+                            .foregroundStyle(.green)
+                            .frame(width: 24)
+                        TextField("+1234567890", text: $phoneNumber)
+                            .textContentType(.telephoneNumber)
+                            .keyboardType(.phonePad)
+                        
+                        if !phoneNumber.isEmpty && phoneNumber != store.userPhoneNumber {
+                            Button("Save") {
+                                store.savePhoneNumber(phoneNumber)
+                            }
+                            .fontWeight(.semibold)
+                        }
+                    }
+                    
+                    // Backend URL input
+                    HStack {
+                        Image(systemName: "server.rack")
+                            .foregroundStyle(.blue)
+                            .frame(width: 24)
+                        TextField("Backend URL", text: $twilioBackendURL)
+                            .textContentType(.URL)
+                            .autocapitalization(.none)
+                            .keyboardType(.URL)
+                        
+                        if !twilioBackendURL.isEmpty {
+                            Button("Save") {
+                                store.twilioService.configure(backendURL: twilioBackendURL)
+                            }
+                            .fontWeight(.semibold)
+                        }
+                    }
+                    
+                    // Status indicator
+                    if store.twilioService.isConfigured && !store.userPhoneNumber.isEmpty {
+                        HStack {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                            Text("Phone calls enabled")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                } header: {
+                    Text("Phone Call Reminders")
+                } footer: {
+                    Text("Enter your phone number (e.g. +14155551234) and backend URL to enable call reminders")
+                }
+                
+                // Notifications & Sync Section
+                Section {
+                    // Notifications row
                     HStack {
                         Image(systemName: store.notificationManager.isAuthorized ? "bell.badge.fill" : "bell.slash.fill")
                             .foregroundStyle(store.notificationManager.isAuthorized ? .green : .red)
+                            .frame(width: 24)
                         Text("Notifications")
                         Spacer()
-                        Text(store.notificationManager.isAuthorized ? "Enabled" : "Disabled")
-                            .foregroundStyle(store.notificationManager.isAuthorized ? .green : .red)
+                        Text(store.notificationManager.isAuthorized ? "On" : "Off")
+                            .foregroundStyle(.secondary)
                     }
                     
                     if !store.notificationManager.isAuthorized {
@@ -277,143 +330,26 @@ struct SettingsView: View {
                                 await store.notificationManager.requestAuthorization()
                             }
                         } label: {
-                            Label("Request Permissions", systemImage: "bell.badge")
-                        }
-                    }
-                } header: {
-                    Text("Notifications")
-                } footer: {
-                    Text("Notifications are required for reminders to work properly")
-                }
-                
-                // Your Phone Number Section
-                Section {
-                    HStack {
-                        TextField("+1 (555) 123-4567", text: $phoneNumber)
-                            .textContentType(.telephoneNumber)
-                            .keyboardType(.phonePad)
-                        
-                        if !phoneNumber.isEmpty {
-                            Button {
-                                store.savePhoneNumber(phoneNumber)
-                            } label: {
-                                Text("Save")
-                                    .fontWeight(.semibold)
-                            }
+                            Text("Enable Notifications")
                         }
                     }
                     
-                    if !store.userPhoneNumber.isEmpty {
-                        HStack {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
-                            Text("Saved: \(store.userPhoneNumber)")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    
-                    Button {
-                        showingPhoneHelp = true
-                    } label: {
-                        Label("Phone number format help", systemImage: "questionmark.circle")
-                            .font(.caption)
-                    }
-                } header: {
-                    Label("Your Phone Number", systemImage: "phone.fill")
-                } footer: {
-                    Text("Used for Level 5 (Phone Call) reminders. Enter in E.164 format: +1234567890")
-                }
-                
-                // Twilio Backend Section
-                Section {
-                    TextField("https://your-backend.com", text: $twilioBackendURL)
-                        .textContentType(.URL)
-                        .autocapitalization(.none)
-                        .keyboardType(.URL)
-                    
-                    HStack {
-                        Button("Save Backend URL") {
-                            store.twilioService.configure(backendURL: twilioBackendURL)
-                        }
-                        .disabled(twilioBackendURL.isEmpty)
-                        
-                        Spacer()
-                        
-                        if store.twilioService.isConfigured {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
-                        }
-                    }
-                } header: {
-                    Label("Twilio Backend", systemImage: "server.rack")
-                } footer: {
-                    Text("Deploy the backend server and enter its URL to enable phone call reminders")
-                }
-                
-                // Sync Status Section
-                Section {
+                    // iCloud row
                     HStack {
                         Image(systemName: store.cloudKitEnabled ? "icloud.fill" : "icloud.slash")
                             .foregroundStyle(store.cloudKitEnabled ? .blue : .secondary)
+                            .frame(width: 24)
                         Text("iCloud Sync")
                         Spacer()
                         if store.isSyncing {
                             ProgressView()
                         } else {
-                            Text(store.cloudKitEnabled ? "Connected" : "Offline")
-                                .foregroundStyle(store.cloudKitEnabled ? .green : .secondary)
+                            Text(store.cloudKitEnabled ? "On" : "Off")
+                                .foregroundStyle(.secondary)
                         }
                     }
                 } header: {
-                    Text("Sync")
-                } footer: {
-                    Text(store.cloudKitEnabled 
-                        ? "Reminders sync across your devices via iCloud"
-                        : "Sign in to iCloud to sync reminders across devices")
-                }
-                
-                // Feature Availability Section
-                Section {
-                    FeatureRow(
-                        name: "Standard Notifications",
-                        icon: "bell",
-                        color: .blue,
-                        available: true
-                    )
-                    
-                    FeatureRow(
-                        name: "Time Sensitive",
-                        icon: "bell.badge",
-                        color: .orange,
-                        available: true
-                    )
-                    
-                    FeatureRow(
-                        name: "Live Activities",
-                        icon: "clock.badge.exclamationmark",
-                        color: .purple,
-                        available: store.liveActivityManager.isAvailable,
-                        requirement: "iOS 16.1+"
-                    )
-                    
-                    FeatureRow(
-                        name: "AlarmKit",
-                        icon: "alarm",
-                        color: .red,
-                        available: false,
-                        requirement: "Coming Soon"
-                    )
-                    
-                    FeatureRow(
-                        name: "Phone Call",
-                        icon: "phone.fill",
-                        color: .green,
-                        available: store.twilioService.isConfigured && !store.userPhoneNumber.isEmpty,
-                        requirement: store.twilioService.isConfigured ? "Set phone number" : "Configure backend"
-                    )
-                } header: {
-                    Text("Feature Availability")
+                    Text("Notifications & Sync")
                 }
                 
                 // About Section
@@ -424,7 +360,6 @@ struct SettingsView: View {
                         Text("1.0.0")
                             .foregroundStyle(.secondary)
                     }
-                    
                     HStack {
                         Text("Reminders")
                         Spacer()
@@ -447,41 +382,6 @@ struct SettingsView: View {
             .onAppear {
                 phoneNumber = store.userPhoneNumber
                 twilioBackendURL = UserDefaults.standard.string(forKey: "twilioBackendURL") ?? ""
-            }
-            .alert("Phone Number Format", isPresented: $showingPhoneHelp) {
-                Button("OK") {}
-            } message: {
-                Text("Enter your phone number in E.164 format:\n\n• Start with +\n• Include country code\n• No spaces or dashes\n\nExamples:\n• US: +14155551234\n• UK: +447911123456")
-            }
-        }
-    }
-}
-
-// MARK: - Feature Row
-struct FeatureRow: View {
-    let name: String
-    let icon: String
-    let color: Color
-    let available: Bool
-    var requirement: String? = nil
-    
-    var body: some View {
-        HStack {
-            Image(systemName: icon)
-                .foregroundStyle(color)
-                .frame(width: 24)
-            
-            Text(name)
-            
-            Spacer()
-            
-            if available {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
-            } else if let requirement = requirement {
-                Text(requirement)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
             }
         }
     }

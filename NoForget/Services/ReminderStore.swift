@@ -275,12 +275,21 @@ class ReminderStore: ObservableObject {
         }
     }
     
-    /// Schedule a phone call at reminder time
+    /// Schedule a phone call at reminder time via backend
     private func schedulePhoneCall(for reminder: Reminder) async {
-        // For now, we schedule a background task
-        // In a full implementation, you'd use BackgroundTasks or a push notification
-        // to trigger the call at the right time
-        print("Phone call scheduled for: \(reminder.title) at \(reminder.dueDate)")
+        do {
+            let scheduleId = try await twilioService.scheduleCall(for: reminder)
+            print("✅ Phone call scheduled on backend: \(scheduleId) for \(reminder.title)")
+        } catch {
+            print("❌ Failed to schedule phone call: \(error)")
+            // The backup time-sensitive notification is already scheduled
+            // so the user will still get reminded, just not by phone
+        }
+    }
+    
+    /// Cancel a scheduled phone call
+    private func cancelPhoneCall(for reminder: Reminder) async {
+        await twilioService.cancelScheduledCall(reminderId: reminder.id.uuidString)
     }
     
     /// Cancel all scheduled notifications for a reminder
@@ -289,6 +298,11 @@ class ReminderStore: ObservableObject {
         
         if #available(iOS 16.2, *) {
             await liveActivityManager.endActivity(for: reminder)
+        }
+        
+        // Cancel phone call if it was scheduled
+        if reminder.notificationLevel == .phoneCall {
+            await cancelPhoneCall(for: reminder)
         }
     }
     

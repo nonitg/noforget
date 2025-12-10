@@ -1,0 +1,445 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 63;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2813CE50207DC13FC02C643E /* TwilioCallService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE0508F7027285092B8C576 /* TwilioCallService.swift */; };
+		3909087D86647605395320C7 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46507410E2A7C3C22B39994B /* NotificationManager.swift */; };
+		49AA11F05FB90A168AA45235 /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18606FD264EF0245A14AC62 /* LiveActivityManager.swift */; };
+		523B633F4A87C719E1C10FDA /* QuickAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E623CC2EB86A71E77A18482 /* QuickAddView.swift */; };
+		68AB330A4684784127E208B2 /* AlarmKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864ED7F7BFF3020C67405989 /* AlarmKitManager.swift */; };
+		78A339E9A96C78754287CDB0 /* ReminderLiveActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF2FA6EF5C43BFA3C54888 /* ReminderLiveActivityView.swift */; };
+		854D12BD071FF0BFB06FCAF2 /* ReminderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27D5E03A23F6342B6955D7C /* ReminderListView.swift */; };
+		951E5A96FBDDE4344B95E249 /* ReminderStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405B4CD421F9E092417689C1 /* ReminderStore.swift */; };
+		97A5E1AB4EC4D15ED94045CA /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C660DE862AAA4F548D3294 /* Reminder.swift */; };
+		99DBD6C51D14546A819729F4 /* ReminderAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B8811B15923D4967531B3D6 /* ReminderAttributes.swift */; };
+		C0BEF754185A6F1892F96CD7 /* NoForgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF77CACA030CE0789FABCF96 /* NoForgetApp.swift */; };
+		CD9B4E490CE455B2BBE8498F /* ReminderAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B8811B15923D4967531B3D6 /* ReminderAttributes.swift */; };
+		E5B16A2F1F674DB20975913B /* ReminderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0C9CD4EED43FE77001477B /* ReminderDetailView.swift */; };
+		EE8152B1F53B78F54E4FEFA3 /* NotificationLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D774795138DB566F13C5781 /* NotificationLevel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		12C69B06B6B65F26A8107F4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		32CF2FA6EF5C43BFA3C54888 /* ReminderLiveActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderLiveActivityView.swift; sourceTree = "<group>"; };
+		3BE0508F7027285092B8C576 /* TwilioCallService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwilioCallService.swift; sourceTree = "<group>"; };
+		3E057D6796AFA8D4324FEB73 /* NoForgetWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = NoForgetWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		405B4CD421F9E092417689C1 /* ReminderStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderStore.swift; sourceTree = "<group>"; };
+		46507410E2A7C3C22B39994B /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		6E623CC2EB86A71E77A18482 /* QuickAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddView.swift; sourceTree = "<group>"; };
+		7DE90A2E6B15573F5431FF63 /* NoForget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoForget.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		864ED7F7BFF3020C67405989 /* AlarmKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmKitManager.swift; sourceTree = "<group>"; };
+		89C660DE862AAA4F548D3294 /* Reminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminder.swift; sourceTree = "<group>"; };
+		8D774795138DB566F13C5781 /* NotificationLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationLevel.swift; sourceTree = "<group>"; };
+		9B8811B15923D4967531B3D6 /* ReminderAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderAttributes.swift; sourceTree = "<group>"; };
+		AD0C9CD4EED43FE77001477B /* ReminderDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDetailView.swift; sourceTree = "<group>"; };
+		B18606FD264EF0245A14AC62 /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
+		BF77CACA030CE0789FABCF96 /* NoForgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoForgetApp.swift; sourceTree = "<group>"; };
+		E27D5E03A23F6342B6955D7C /* ReminderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderListView.swift; sourceTree = "<group>"; };
+		EF16302D0FF16953621C644D /* NoForget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NoForget.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		14D512B6DE68DCE96A7667BC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7DE90A2E6B15573F5431FF63 /* NoForget.app */,
+				3E057D6796AFA8D4324FEB73 /* NoForgetWidget.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2DE9015AB9C13FD8758268C7 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8D774795138DB566F13C5781 /* NotificationLevel.swift */,
+				89C660DE862AAA4F548D3294 /* Reminder.swift */,
+				9B8811B15923D4967531B3D6 /* ReminderAttributes.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		50B7DC8A358FB51DA6980F55 /* NoForget */ = {
+			isa = PBXGroup;
+			children = (
+				12C69B06B6B65F26A8107F4F /* Info.plist */,
+				EF16302D0FF16953621C644D /* NoForget.entitlements */,
+				BF77CACA030CE0789FABCF96 /* NoForgetApp.swift */,
+				2DE9015AB9C13FD8758268C7 /* Models */,
+				9B752EFD0AB81E95E8582CC0 /* Services */,
+				A5EAE101D9F5919C5784608B /* Views */,
+			);
+			path = NoForget;
+			sourceTree = "<group>";
+		};
+		620BA47B09CEE2B8F1B32ADD = {
+			isa = PBXGroup;
+			children = (
+				50B7DC8A358FB51DA6980F55 /* NoForget */,
+				C2B4E6663E0733374A1EEE64 /* NoForgetWidget */,
+				14D512B6DE68DCE96A7667BC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9B752EFD0AB81E95E8582CC0 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				864ED7F7BFF3020C67405989 /* AlarmKitManager.swift */,
+				B18606FD264EF0245A14AC62 /* LiveActivityManager.swift */,
+				46507410E2A7C3C22B39994B /* NotificationManager.swift */,
+				405B4CD421F9E092417689C1 /* ReminderStore.swift */,
+				3BE0508F7027285092B8C576 /* TwilioCallService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A5EAE101D9F5919C5784608B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				6E623CC2EB86A71E77A18482 /* QuickAddView.swift */,
+				AD0C9CD4EED43FE77001477B /* ReminderDetailView.swift */,
+				E27D5E03A23F6342B6955D7C /* ReminderListView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		C2B4E6663E0733374A1EEE64 /* NoForgetWidget */ = {
+			isa = PBXGroup;
+			children = (
+				32CF2FA6EF5C43BFA3C54888 /* ReminderLiveActivityView.swift */,
+			);
+			path = NoForgetWidget;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		64D3DD88607E83424622A247 /* NoForget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AB0B358438E2515B4C74CAA2 /* Build configuration list for PBXNativeTarget "NoForget" */;
+			buildPhases = (
+				ACFE0C7B47733E9DC86E87C1 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NoForget;
+			packageProductDependencies = (
+			);
+			productName = NoForget;
+			productReference = 7DE90A2E6B15573F5431FF63 /* NoForget.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C3EA0286B60E354EA1984A77 /* NoForgetWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1730168B9326B498B17A303A /* Build configuration list for PBXNativeTarget "NoForgetWidget" */;
+			buildPhases = (
+				F6C7E50D1545745F421FA773 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NoForgetWidget;
+			packageProductDependencies = (
+			);
+			productName = NoForgetWidget;
+			productReference = 3E057D6796AFA8D4324FEB73 /* NoForgetWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2C4CF83D97C07848D17C2E80 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = 4F9C45684C2B9152B572A7D8 /* Build configuration list for PBXProject "NoForget" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 620BA47B09CEE2B8F1B32ADD;
+			minimizedProjectReferenceProxies = 1;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				64D3DD88607E83424622A247 /* NoForget */,
+				C3EA0286B60E354EA1984A77 /* NoForgetWidget */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		ACFE0C7B47733E9DC86E87C1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				68AB330A4684784127E208B2 /* AlarmKitManager.swift in Sources */,
+				49AA11F05FB90A168AA45235 /* LiveActivityManager.swift in Sources */,
+				C0BEF754185A6F1892F96CD7 /* NoForgetApp.swift in Sources */,
+				EE8152B1F53B78F54E4FEFA3 /* NotificationLevel.swift in Sources */,
+				3909087D86647605395320C7 /* NotificationManager.swift in Sources */,
+				523B633F4A87C719E1C10FDA /* QuickAddView.swift in Sources */,
+				97A5E1AB4EC4D15ED94045CA /* Reminder.swift in Sources */,
+				99DBD6C51D14546A819729F4 /* ReminderAttributes.swift in Sources */,
+				E5B16A2F1F674DB20975913B /* ReminderDetailView.swift in Sources */,
+				854D12BD071FF0BFB06FCAF2 /* ReminderListView.swift in Sources */,
+				951E5A96FBDDE4344B95E249 /* ReminderStore.swift in Sources */,
+				2813CE50207DC13FC02C643E /* TwilioCallService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6C7E50D1545745F421FA773 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD9B4E490CE455B2BBE8498F /* ReminderAttributes.swift in Sources */,
+				78A339E9A96C78754287CDB0 /* ReminderLiveActivityView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		26BB92A11995FF6594C6D933 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.noforget.app.widget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2CE1D1E6F50986E9914672DE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = NoForget/NoForget.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = R792AY4V3N;
+				INFOPLIST_FILE = NoForget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.noforget.app;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		75B52CF455E2A34F4FAF7412 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.noforget.app.widget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A68A9ACFAD0FE2067F968655 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B6E83436FF98D21E36097F73 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = NoForget/NoForget.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = R792AY4V3N;
+				INFOPLIST_FILE = NoForget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.noforget.app;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D9B2D43275D03AC7DEB48ECD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1730168B9326B498B17A303A /* Build configuration list for PBXNativeTarget "NoForgetWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26BB92A11995FF6594C6D933 /* Debug */,
+				75B52CF455E2A34F4FAF7412 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4F9C45684C2B9152B572A7D8 /* Build configuration list for PBXProject "NoForget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D9B2D43275D03AC7DEB48ECD /* Debug */,
+				A68A9ACFAD0FE2067F968655 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		AB0B358438E2515B4C74CAA2 /* Build configuration list for PBXNativeTarget "NoForget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B6E83436FF98D21E36097F73 /* Debug */,
+				2CE1D1E6F50986E9914672DE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2C4CF83D97C07848D17C2E80 /* Project object */;
+}

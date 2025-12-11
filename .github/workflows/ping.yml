@@ -12,6 +12,6 @@ jobs:
     steps:
       - name: Curl health endpoint
         run: |
-          echo "Pinging https://noforget-backend.onrender.com/health"
+          echo "Pinging https://noforget-backend.onrender.com/schedule"
           # retry a few times, but don't fail the workflow on transient errors
-          curl --retry 3 --retry-delay 5 --max-time 30 -fsS https://noforget-backend.onrender.com/health || echo "Ping failed"
+          curl --retry 3 --retry-delay 5 --max-time 30 -fsS https://noforget-backend.onrender.com/schedule || echo "Ping failed"

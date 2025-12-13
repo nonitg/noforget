@@ -21,6 +21,7 @@
 		CD9B4E490CE455B2BBE8498F /* ReminderAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B8811B15923D4967531B3D6 /* ReminderAttributes.swift */; };
 		E5B16A2F1F674DB20975913B /* ReminderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0C9CD4EED43FE77001477B /* ReminderDetailView.swift */; };
 		EE8152B1F53B78F54E4FEFA3 /* NotificationLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D774795138DB566F13C5781 /* NotificationLevel.swift */; };
+		F1A2B3C4D5E6F7A8B9C0D1E3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F7A8B9C0D1E2 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -127,6 +128,7 @@
 			buildConfigurationList = AB0B358438E2515B4C74CAA2 /* Build configuration list for PBXNativeTarget "NoForget" */;
 			buildPhases = (
 				ACFE0C7B47733E9DC86E87C1 /* Sources */,
+				F1A2B3C4D5E6F7A8B9C0D1E4 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -214,6 +216,17 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F1A2B3C4D5E6F7A8B9C0D1E4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1A2B3C4D5E6F7A8B9C0D1E3 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
 		26BB92A11995FF6594C6D933 /* Debug */ = {

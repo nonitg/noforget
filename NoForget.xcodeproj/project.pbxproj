@@ -37,10 +37,12 @@
 		AD0C9CD4EED43FE77001477B /* ReminderDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDetailView.swift; sourceTree = "<group>"; };
 		AF8B8D612EECEE800095E620 /* ContactService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactService.swift; sourceTree = "<group>"; };
 		AF8B8D632EECEE8D0095E620 /* CallOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallOnboardingView.swift; sourceTree = "<group>"; };
+		AF8B8D652EED33F70095E620 /* dontforget.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = dontforget.icon; sourceTree = "<group>"; };
 		B18606FD264EF0245A14AC62 /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
 		BF77CACA030CE0789FABCF96 /* NoForgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoForgetApp.swift; sourceTree = "<group>"; };
 		E27D5E03A23F6342B6955D7C /* ReminderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderListView.swift; sourceTree = "<group>"; };
 		EF16302D0FF16953621C644D /* NoForget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NoForget.entitlements; sourceTree = "<group>"; };
+		F1A2B3C4D5E6F7A8B9C0D1E2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -58,6 +60,7 @@
 			children = (
 				8D774795138DB566F13C5781 /* NotificationLevel.swift */,
 				89C660DE862AAA4F548D3294 /* Reminder.swift */,
+				AF8B8D652EED33F70095E620 /* dontforget.icon */,
 				9B8811B15923D4967531B3D6 /* ReminderAttributes.swift */,
 			);
 			path = Models;
@@ -68,6 +71,7 @@
 			children = (
 				12C69B06B6B65F26A8107F4F /* Info.plist */,
 				EF16302D0FF16953621C644D /* NoForget.entitlements */,
+				F1A2B3C4D5E6F7A8B9C0D1E2 /* Assets.xcassets */,
 				BF77CACA030CE0789FABCF96 /* NoForgetApp.swift */,
 				2DE9015AB9C13FD8758268C7 /* Models */,
 				9B752EFD0AB81E95E8582CC0 /* Services */,

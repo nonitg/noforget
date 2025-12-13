@@ -15,6 +15,8 @@ struct ReminderDetailView: View {
     @State private var isSaving = false
     @State private var showingError = false
     @State private var errorMessage = ""
+    @State private var showingEnableCallsAlert = false
+    @State private var showingSettingsForCalls = false
     
     private var isEditing: Bool { reminder != nil }
     
@@ -50,17 +52,17 @@ struct ReminderDetailView: View {
                         NotificationLevelRow(
                             level: level,
                             isSelected: notificationLevel == level,
-                            isAvailable: level.isAvailable
+                            isAvailable: level.isAvailable(callOnboardingCompleted: store.callOnboardingCompleted)
                         ) {
-                            if level.isAvailable {
+                            if level.isAvailable(callOnboardingCompleted: store.callOnboardingCompleted) {
                                 notificationLevel = level
+                            } else if level == .phoneCall {
+                                showingEnableCallsAlert = true
                             }
                         }
                     }
                 } header: {
                     Text("Intensity Level")
-                } footer: {
-                    Text("Higher levels ensure you don't miss important reminders")
                 }
                 
                 // Phone Number (for Level 5)
@@ -108,6 +110,15 @@ struct ReminderDetailView: View {
                 Button("OK") {}
             } message: {
                 Text(errorMessage)
+            }
+            .alert("Enable Phone Calls?", isPresented: $showingEnableCallsAlert) {
+                Button("Open Settings") { showingSettingsForCalls = true }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Set up phone call reminders to get called for important tasks.")
+            }
+            .sheet(isPresented: $showingSettingsForCalls) {
+                SettingsView()
             }
             .onAppear {
                 if let reminder = reminder {
@@ -234,8 +245,8 @@ struct NotificationLevelRow: View {
     
     private var unavailableReason: String {
         switch level {
-        case .liveActivity: return "iOS 16.1+"
-        case .alarmKit: return "iOS 26+"
+        case .liveActivity: return "Coming Soon"
+        case .phoneCall: return "Enable in Settings"
         default: return ""
         }
     }

@@ -45,6 +45,9 @@ struct CallOnboardingView: View {
     @State private var contactAdded = false
     @State private var twilioNumber = ""
     
+    // Focus state for auto-focusing verification code input
+    @FocusState private var isCodeFieldFocused: Bool
+    
     // Computed full phone number with country code
     private var phoneNumber: String {
         selectedCountry.code + rawPhoneNumber.filter { $0.isNumber }
@@ -121,56 +124,76 @@ struct CallOnboardingView: View {
     // MARK: - Progress Bar
     
     private var progressBar: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 8) {
             ForEach(1...totalSteps, id: \.self) { step in
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(step <= currentStep ? Color.blue : Color.gray.opacity(0.3))
-                    .frame(height: 4)
+                Circle()
+                    .fill(step <= currentStep ? Color.blue : Color(.systemGray4))
+                    .frame(width: step == currentStep ? 10 : 8, height: step == currentStep ? 10 : 8)
+                    .animation(.spring(response: 0.4, dampingFraction: 0.8), value: currentStep)
             }
         }
+        .padding(.vertical, 8)
     }
     
     // MARK: - Step 1: Welcome
     
     private var step1Welcome: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 32) {
             Spacer()
             
-            Image(systemName: "phone.circle.fill")
-                .font(.system(size: 80))
-                .foregroundStyle(.blue)
+            // Hero icon with gradient background
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.blue.opacity(0.2), Color.blue.opacity(0.05)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 140, height: 140)
+                
+                Image(systemName: "phone.circle.fill")
+                    .font(.system(size: 70))
+                    .foregroundStyle(.blue)
+            }
             
-            Text("Never Miss a Reminder")
-                .font(.title)
-                .fontWeight(.bold)
+            VStack(spacing: 12) {
+                Text("Never Miss a Reminder")
+                    .font(.title)
+                    .fontWeight(.bold)
+                
+                Text("For your most important reminders, we'll call your phone to make sure you don't miss them.")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+            }
             
-            Text("For your most important reminders, we'll call your phone to make sure you don't miss them.")
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
-            
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 16) {
                 featureRow(icon: "checkmark.circle.fill", text: "Calls break through Do Not Disturb")
                 featureRow(icon: "checkmark.circle.fill", text: "Works even when app is closed")
                 featureRow(icon: "checkmark.circle.fill", text: "Optional snooze during the call")
             }
-            .padding(.top)
             
             Spacer()
             
             Button {
-                withAnimation { currentStep = 2 }
+                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                impactFeedback.impactOccurred()
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                    currentStep = 2
+                }
             } label: {
-                Text("Get Started")
+                Label("Get Started", systemImage: "arrow.right")
                     .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding()
+                    .padding(.horizontal, 32)
+                    .padding(.vertical, 14)
                     .background(.blue)
                     .foregroundColor(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .clipShape(Capsule())
             }
-            .padding(.horizontal)
+            .buttonStyle(.plain)
             .padding(.bottom, 32)
         }
     }
@@ -178,153 +201,172 @@ struct CallOnboardingView: View {
     // MARK: - Step 2: Verify Phone
     
     private var step2VerifyPhone: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 28) {
             Spacer()
             
-            Image(systemName: "person.badge.shield.checkmark.fill")
-                .font(.system(size: 60))
-                .foregroundStyle(.green)
-            
-            Text("Verify Your Number")
-                .font(.title2)
-                .fontWeight(.bold)
-            
-            Text("We'll send a verification code to confirm this is your phone.")
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
-            
-            VStack(spacing: 16) {
-                // Country code picker + Phone number input
-                HStack(spacing: 12) {
-                    // Country picker
-                    Menu {
-                        ForEach(CountryCode.all) { country in
-                            Button {
-                                selectedCountry = country
-                            } label: {
-                                Text("\(country.flag) \(country.name) (\(country.code))")
-                            }
-                        }
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text(selectedCountry.flag)
-                                .font(.title2)
-                            Text(selectedCountry.code)
-                                .font(.body)
-                                .fontWeight(.medium)
-                            Image(systemName: "chevron.down")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 14)
-                        .background(Color(.systemGray5))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                    }
-                    .foregroundStyle(.primary)
-                    
-                    // Phone number input - simple and clean
-                    TextField("(555) 123-4567", text: Binding(
-                        get: { formattedPhoneDisplay },
-                        set: { newValue in
-                            // Extract only digits from input
-                            let digits = newValue.filter { $0.isNumber }
-                            let maxLength = selectedCountry.code == "+1" ? 10 : 12
-                            rawPhoneNumber = String(digits.prefix(maxLength))
-                        }
-                    ))
-                    .keyboardType(.phonePad)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                }
+            // Hero icon
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.green.opacity(0.2), Color.green.opacity(0.05)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 120, height: 120)
                 
-                // Show full number preview
-                if !rawPhoneNumber.isEmpty {
-                    Text("Full number: \(phoneNumber)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                
-                if !codeSent {
-                    // Send code button
-                    Button {
-                        sendVerificationCode()
-                    } label: {
-                        HStack {
-                            if isLoading {
-                                ProgressView()
-                                    .tint(.white)
-                            }
-                            Text("Send Code")
-                        }
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(rawPhoneNumber.count >= 7 ? Color.blue : Color.gray)
-                        .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                    }
-                    .disabled(rawPhoneNumber.count < 7 || isLoading)
-                } else {
-                    // Verification code input
-                    HStack {
-                        Image(systemName: "lock.fill")
-                            .foregroundStyle(.secondary)
-                        TextField("Enter 6-digit code", text: $verificationCode)
-                            .keyboardType(.numberPad)
-                            .textContentType(.oneTimeCode)
-                    }
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    
-                    Button {
-                        verifyCode()
-                    } label: {
-                        HStack {
-                            if isLoading {
-                                ProgressView()
-                                    .tint(.white)
-                            }
-                            Text(isVerified ? "Verified ✓" : "Verify")
-                        }
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(isVerified ? Color.green : (verificationCode.count == 6 ? Color.blue : Color.gray))
-                        .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                    }
-                    .disabled(verificationCode.count != 6 || isLoading || isVerified)
-                    
-                    Button("Resend Code") {
-                        sendVerificationCode()
-                    }
-                    .font(.subheadline)
-                    .foregroundStyle(.blue)
-                }
+                Image(systemName: "person.badge.shield.checkmark.fill")
+                    .font(.system(size: 56))
+                    .foregroundStyle(.green)
             }
-            .padding(.horizontal)
+            
+            VStack(spacing: 8) {
+                Text("Verify Your Number")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                
+                Text(codeSent ? "Enter the 6-digit code we sent to your phone." : "We'll send a verification code to confirm this is your phone.")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+            }
+            
+            if !codeSent {
+                // Phone input section - clean, no container box
+                VStack(spacing: 16) {
+                    HStack(spacing: 12) {
+                        // Country picker
+                        Menu {
+                            ForEach(CountryCode.all) { country in
+                                Button {
+                                    selectedCountry = country
+                                } label: {
+                                    Text("\(country.flag) \(country.name) (\(country.code))")
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 6) {
+                                Text(selectedCountry.flag)
+                                    .font(.title3)
+                                Text(selectedCountry.code)
+                                    .font(.body)
+                                    .fontWeight(.medium)
+                                Image(systemName: "chevron.down")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 14)
+                            .background(Color(.systemGray6))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .foregroundStyle(.primary)
+                        
+                        // Phone number input
+                        TextField("(555) 123-4567", text: Binding(
+                            get: { formattedPhoneDisplay },
+                            set: { newValue in
+                                let digits = newValue.filter { $0.isNumber }
+                                let maxLength = selectedCountry.code == "+1" ? 10 : 12
+                                rawPhoneNumber = String(digits.prefix(maxLength))
+                            }
+                        ))
+                        .keyboardType(.phonePad)
+                        .font(.body)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                }
+                .padding(.horizontal, 24)
+            } else {
+                // Verification code section - tappable to focus
+                VStack(spacing: 20) {
+                    // Display phone number being verified
+                    Text(phoneNumber)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    
+                    // Tappable digit boxes
+                    HStack(spacing: 10) {
+                        ForEach(0..<6, id: \.self) { index in
+                            Text(index < verificationCode.count ? String(verificationCode[verificationCode.index(verificationCode.startIndex, offsetBy: index)]) : "")
+                                .font(.title)
+                                .fontWeight(.semibold)
+                                .frame(width: 48, height: 60)
+                                .background(Color(.systemGray6))
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(isCodeFieldFocused && index == verificationCode.count ? Color.blue : Color.clear, lineWidth: 2)
+                                )
+                        }
+                    }
+                    .onTapGesture {
+                        isCodeFieldFocused = true
+                    }
+                    
+                    // Hidden text field for code input - with focus binding
+                    TextField("", text: $verificationCode)
+                        .keyboardType(.numberPad)
+                        .textContentType(.oneTimeCode)
+                        .focused($isCodeFieldFocused)
+                        .frame(width: 1, height: 1)
+                        .opacity(0.01)
+                        .onChange(of: verificationCode) { oldValue, newValue in
+                            verificationCode = String(newValue.prefix(6).filter { $0.isNumber })
+                            if verificationCode.count == 6 && !isVerified {
+                                verifyCode()
+                            }
+                        }
+                    
+                    if isVerified {
+                        HStack(spacing: 8) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                            Text("Verified")
+                                .fontWeight(.medium)
+                        }
+                        .font(.headline)
+                        .foregroundStyle(.green)
+                        .transition(.scale.combined(with: .opacity))
+                    } else {
+                        Button("Resend Code") {
+                            sendVerificationCode()
+                        }
+                        .font(.subheadline)
+                        .foregroundStyle(.blue)
+                    }
+                }
+                .padding(.horizontal, 24)
+            }
             
             Spacer()
             
-            if isVerified {
+            // Bottom button - consistent with home screen style
+            if !codeSent {
                 Button {
-                    store.savePhoneNumber(phoneNumber)
-                    withAnimation { currentStep = 3 }
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    impactFeedback.impactOccurred()
+                    sendVerificationCode()
                 } label: {
-                    Text("Continue")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(.blue)
-                        .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    HStack(spacing: 8) {
+                        if isLoading {
+                            ProgressView()
+                                .tint(.white)
+                        }
+                        Text("Send Verification Code")
+                    }
+                    .font(.headline)
+                    .padding(.horizontal, 32)
+                    .padding(.vertical, 14)
+                    .background(rawPhoneNumber.count >= 7 ? Color.blue : Color(.systemGray4))
+                    .foregroundColor(.white)
+                    .clipShape(Capsule())
                 }
-                .padding(.horizontal)
+                .disabled(rawPhoneNumber.count < 7 || isLoading)
                 .padding(.bottom, 32)
             }
         }
@@ -333,79 +375,131 @@ struct CallOnboardingView: View {
     // MARK: - Step 3: Add Contact
     
     private var step3AddContact: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 28) {
             Spacer()
             
-            Image(systemName: "person.crop.circle.badge.plus")
-                .font(.system(size: 60))
-                .foregroundStyle(.purple)
+            // Hero icon with gradient background
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.purple.opacity(0.2), Color.purple.opacity(0.05)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 120, height: 120)
+                
+                Image(systemName: "person.crop.circle.badge.plus")
+                    .font(.system(size: 56))
+                    .foregroundStyle(.purple)
+            }
             
-            Text("Add to Contacts")
-                .font(.title2)
-                .fontWeight(.bold)
-            
-            Text("Add our number to your contacts so you can enable Emergency Bypass.")
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
-            
-            // The phone number to add
             VStack(spacing: 8) {
-                Text("Remind Line")
-                    .font(.headline)
-                Text(twilioNumber.isEmpty ? "Loading..." : twilioNumber)
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.blue)
+                Text("Add to Contacts")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                
+                Text("Add our number to your contacts so you can enable Emergency Bypass.")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
             }
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(Color(.systemGray6))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .padding(.horizontal)
             
-            if contactService.authorizationStatus == .denied {
-                // Manual instructions
-                manualContactInstructions
-            } else {
-                // Auto-add button
-                Button {
-                    addContactAutomatically()
-                } label: {
-                    HStack {
-                        if isLoading {
-                            ProgressView()
-                                .tint(.white)
-                        }
-                        Image(systemName: contactAdded ? "checkmark.circle.fill" : "plus.circle.fill")
-                        Text(contactAdded ? "Added to Contacts" : "Add to Contacts")
-                    }
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(contactAdded ? Color.green : Color.purple)
-                    .foregroundColor(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+            // Contact info - clean display without box
+            VStack(spacing: 16) {
+                VStack(spacing: 6) {
+                    Text("Remind Line")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Text(twilioNumber.isEmpty ? "Loading..." : twilioNumber)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
                 }
-                .disabled(isLoading || contactAdded || twilioNumber.isEmpty)
-                .padding(.horizontal)
+                
+                if contactService.authorizationStatus == .denied {
+                    // Copy button for manual add
+                    Button {
+                        UIPasteboard.general.string = twilioNumber
+                        let impactFeedback = UIImpactFeedbackGenerator(style: .light)
+                        impactFeedback.impactOccurred()
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "doc.on.doc")
+                            Text("Copy Number")
+                        }
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.purple)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 20)
+                        .background(Color.purple.opacity(0.1))
+                        .clipShape(Capsule())
+                    }
+                } else {
+                    // Auto-add button - capsule style
+                    Button {
+                        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                        impactFeedback.impactOccurred()
+                        addContactAutomatically()
+                    } label: {
+                        HStack(spacing: 8) {
+                            if isLoading {
+                                ProgressView()
+                                    .tint(.white)
+                            } else {
+                                Image(systemName: contactAdded ? "checkmark.circle.fill" : "plus.circle.fill")
+                            }
+                            Text(contactAdded ? "Added to Contacts" : "Add to Contacts")
+                        }
+                        .font(.headline)
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 14)
+                        .background(contactAdded ? Color.green : Color.purple)
+                        .foregroundColor(.white)
+                        .clipShape(Capsule())
+                    }
+                    .disabled(isLoading || contactAdded || twilioNumber.isEmpty)
+                }
             }
+            .padding(.horizontal, 24)
             
             Spacer()
             
-            Button {
-                withAnimation { currentStep = 4 }
-            } label: {
-                Text(contactAdded ? "Continue" : "Skip for Now")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(contactAdded ? .blue : Color(.systemGray5))
-                    .foregroundColor(contactAdded ? .white : .primary)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+            // Continue/Skip button
+            VStack(spacing: 12) {
+                if contactAdded {
+                    Button {
+                        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                        impactFeedback.impactOccurred()
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                            currentStep = 4
+                        }
+                    } label: {
+                        Label("Continue", systemImage: "arrow.right")
+                            .font(.headline)
+                            .padding(.horizontal, 32)
+                            .padding(.vertical, 14)
+                            .background(.blue)
+                            .foregroundColor(.white)
+                            .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                } else {
+                    Button {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                            currentStep = 4
+                        }
+                    } label: {
+                        Text("Skip for Now")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
-            .padding(.horizontal)
             .padding(.bottom, 32)
         }
     }
@@ -439,65 +533,78 @@ struct CallOnboardingView: View {
     // MARK: - Step 4: Emergency Bypass
     
     private var step4EmergencyBypass: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 28) {
             Spacer()
             
-            Image(systemName: "bell.badge.fill")
-                .font(.system(size: 60))
-                .foregroundStyle(.orange)
-            
-            Text("Enable Emergency Bypass")
-                .font(.title2)
-                .fontWeight(.bold)
-            
-            Text("This ensures our calls ring even when Do Not Disturb is on.")
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
-            
-            VStack(alignment: .leading, spacing: 12) {
-                instructionRow(number: "1", text: "Open the Contacts app")
-                instructionRow(number: "2", text: "Find \"Remind Line\"")
-                instructionRow(number: "3", text: "Tap Edit (top right)")
-                instructionRow(number: "4", text: "Tap Ringtone")
-                instructionRow(number: "5", text: "Turn on Emergency Bypass")
+            // Hero icon with gradient background
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.orange.opacity(0.2), Color.orange.opacity(0.05)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 120, height: 120)
+                
+                Image(systemName: "bell.badge.fill")
+                    .font(.system(size: 56))
+                    .foregroundStyle(.orange)
             }
-            .padding()
-            .background(Color(.systemGray6))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .padding(.horizontal)
             
-            Text("Without this, calls may be silenced when your phone is on Do Not Disturb.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
+            VStack(spacing: 8) {
+                Text("Enable Emergency Bypass")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                
+                Text("This ensures our calls ring even when Do Not Disturb is on.")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+            }
+            
+            // Timeline-style instructions - cleaner without box
+            VStack(alignment: .leading, spacing: 14) {
+                timelineStep(icon: "person.crop.circle", text: "Open the Contacts app")
+                timelineStep(icon: "magnifyingglass", text: "Find \"Remind Line\"")
+                timelineStep(icon: "pencil", text: "Tap Edit (top right)")
+                timelineStep(icon: "bell.fill", text: "Tap Ringtone")
+                timelineStep(icon: "checkmark.circle.fill", text: "Turn on Emergency Bypass")
+            }
+            .padding(.horizontal, 40)
             
             Spacer()
             
             VStack(spacing: 12) {
                 Button {
-                    withAnimation { currentStep = 5 }
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    impactFeedback.impactOccurred()
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        currentStep = 5
+                    }
                 } label: {
-                    Text("I've Done This")
+                    Label("I've Done This", systemImage: "checkmark")
                         .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 14)
                         .background(.blue)
                         .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .clipShape(Capsule())
                 }
+                .buttonStyle(.plain)
                 
                 Button {
-                    withAnimation { currentStep = 5 }
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        currentStep = 5
+                    }
                 } label: {
                     Text("Skip for Now")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
             }
-            .padding(.horizontal)
             .padding(.bottom, 32)
         }
     }
@@ -505,46 +612,79 @@ struct CallOnboardingView: View {
     // MARK: - Step 5: Complete
     
     private var step5Complete: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 28) {
             Spacer()
             
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 80))
-                .foregroundStyle(.green)
-            
-            Text("All Set!")
-                .font(.title)
-                .fontWeight(.bold)
-            
-            Text("Phone call reminders are now enabled.")
-                .font(.body)
-                .foregroundStyle(.secondary)
-            
-            // Summary
-            VStack(alignment: .leading, spacing: 12) {
-                summaryRow(icon: "phone.fill", label: "Your number", value: phoneNumber, success: isVerified)
-                summaryRow(icon: "person.crop.circle", label: "Contact", value: contactAdded ? "Added" : "Not added", success: contactAdded)
+            // Success icon with gradient background
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.green.opacity(0.2), Color.green.opacity(0.05)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 140, height: 140)
+                
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 70))
+                    .foregroundStyle(.green)
             }
-            .padding()
-            .background(Color(.systemGray6))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .padding(.horizontal)
+            
+            VStack(spacing: 8) {
+                Text("All Set!")
+                    .font(.title)
+                    .fontWeight(.bold)
+                
+                Text("Phone call reminders are now enabled.")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+            }
+            
+            // Summary - clean display without box
+            VStack(spacing: 16) {
+                HStack(spacing: 12) {
+                    Image(systemName: "phone.fill")
+                        .foregroundStyle(.green)
+                        .frame(width: 24)
+                    Text(phoneNumber)
+                        .font(.subheadline)
+                    Spacer()
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                }
+                
+                HStack(spacing: 12) {
+                    Image(systemName: "person.crop.circle")
+                        .foregroundStyle(contactAdded ? .green : .secondary)
+                        .frame(width: 24)
+                    Text(contactAdded ? "Contact added" : "Contact not added")
+                        .font(.subheadline)
+                    Spacer()
+                    Image(systemName: contactAdded ? "checkmark.circle.fill" : "circle")
+                        .foregroundStyle(contactAdded ? .green : .secondary)
+                }
+            }
+            .padding(.horizontal, 40)
             
             Spacer()
             
             Button {
+                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                impactFeedback.impactOccurred()
                 store.setCallOnboardingCompleted(true)
                 dismiss()
             } label: {
-                Text("Start Using Call Reminders")
+                Text("Done")
                     .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding()
+                    .padding(.horizontal, 48)
+                    .padding(.vertical, 14)
                     .background(.blue)
                     .foregroundColor(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .clipShape(Capsule())
             }
-            .padding(.horizontal)
+            .buttonStyle(.plain)
             .padding(.bottom, 32)
         }
     }
@@ -554,7 +694,23 @@ struct CallOnboardingView: View {
     private func featureRow(icon: String, text: String) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
+                .font(.body)
                 .foregroundStyle(.green)
+                .frame(width: 24)
+            Text(text)
+                .font(.subheadline)
+        }
+    }
+    
+    private func timelineStep(icon: String, text: String) -> some View {
+        HStack(alignment: .center, spacing: 12) {
+            Image(systemName: icon)
+                .font(.body)
+                .foregroundStyle(.blue)
+                .frame(width: 28, height: 28)
+                .background(Color.blue.opacity(0.1))
+                .clipShape(Circle())
+            
             Text(text)
                 .font(.subheadline)
         }
@@ -575,14 +731,23 @@ struct CallOnboardingView: View {
     }
     
     private func summaryRow(icon: String, label: String, value: String, success: Bool) -> some View {
-        HStack {
+        HStack(spacing: 12) {
             Image(systemName: icon)
+                .font(.body)
                 .foregroundStyle(success ? .green : .secondary)
                 .frame(width: 24)
-            Text(label)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(label)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Text(value)
+                    .font(.body)
+                    .fontWeight(.medium)
+            }
+            
             Spacer()
-            Text(value)
-                .foregroundStyle(.secondary)
+            
             Image(systemName: success ? "checkmark.circle.fill" : "circle")
                 .foregroundStyle(success ? .green : .secondary)
         }
@@ -639,6 +804,10 @@ struct CallOnboardingView: View {
                 await MainActor.run {
                     codeSent = true
                     isLoading = false
+                    // Auto-focus the code input after a short delay
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        isCodeFieldFocused = true
+                    }
                 }
             } catch {
                 await MainActor.run {
@@ -679,6 +848,17 @@ struct CallOnboardingView: View {
                     await MainActor.run {
                         if valid {
                             isVerified = true
+                            // Haptic feedback for success
+                            let successFeedback = UINotificationFeedbackGenerator()
+                            successFeedback.notificationOccurred(.success)
+                            
+                            // Auto-progress after a brief delay
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                store.savePhoneNumber(phoneNumber)
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                    currentStep = 3
+                                }
+                            }
                         } else {
                             errorMessage = "Invalid or expired code. Please try again."
                             showError = true

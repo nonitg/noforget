@@ -10,7 +10,6 @@
 		2813CE50207DC13FC02C643E /* TwilioCallService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE0508F7027285092B8C576 /* TwilioCallService.swift */; };
 		3909087D86647605395320C7 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46507410E2A7C3C22B39994B /* NotificationManager.swift */; };
 		49AA11F05FB90A168AA45235 /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18606FD264EF0245A14AC62 /* LiveActivityManager.swift */; };
-		68AB330A4684784127E208B2 /* AlarmKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864ED7F7BFF3020C67405989 /* AlarmKitManager.swift */; };
 		78A339E9A96C78754287CDB0 /* ReminderLiveActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF2FA6EF5C43BFA3C54888 /* ReminderLiveActivityView.swift */; };
 		854D12BD071FF0BFB06FCAF2 /* ReminderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27D5E03A23F6342B6955D7C /* ReminderListView.swift */; };
 		951E5A96FBDDE4344B95E249 /* ReminderStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405B4CD421F9E092417689C1 /* ReminderStore.swift */; };
@@ -32,7 +31,6 @@
 		405B4CD421F9E092417689C1 /* ReminderStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderStore.swift; sourceTree = "<group>"; };
 		46507410E2A7C3C22B39994B /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		7DE90A2E6B15573F5431FF63 /* NoForget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoForget.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		864ED7F7BFF3020C67405989 /* AlarmKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmKitManager.swift; sourceTree = "<group>"; };
 		89C660DE862AAA4F548D3294 /* Reminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminder.swift; sourceTree = "<group>"; };
 		8D774795138DB566F13C5781 /* NotificationLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationLevel.swift; sourceTree = "<group>"; };
 		9B8811B15923D4967531B3D6 /* ReminderAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderAttributes.swift; sourceTree = "<group>"; };
@@ -91,7 +89,6 @@
 			isa = PBXGroup;
 			children = (
 				AF8B8D612EECEE800095E620 /* ContactService.swift */,
-				864ED7F7BFF3020C67405989 /* AlarmKitManager.swift */,
 				B18606FD264EF0245A14AC62 /* LiveActivityManager.swift */,
 				46507410E2A7C3C22B39994B /* NotificationManager.swift */,
 				405B4CD421F9E092417689C1 /* ReminderStore.swift */,
@@ -188,7 +185,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				68AB330A4684784127E208B2 /* AlarmKitManager.swift in Sources */,
 				49AA11F05FB90A168AA45235 /* LiveActivityManager.swift in Sources */,
 				C0BEF754185A6F1892F96CD7 /* NoForgetApp.swift in Sources */,
 				EE8152B1F53B78F54E4FEFA3 /* NotificationLevel.swift in Sources */,

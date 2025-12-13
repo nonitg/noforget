@@ -10,6 +10,8 @@ struct ReminderListView: View {
     @State private var showingDetail = false
     @State private var selectedReminder: Reminder?
     @State private var showingSettings = false
+    @State private var showCallDiscoveryHint = false
+    @AppStorage("hasSeenCallDiscoveryHint") private var hasSeenCallDiscoveryHint = false
     
     var body: some View {
         NavigationStack {
@@ -28,7 +30,7 @@ struct ReminderListView: View {
                     reminderList
                 }
             }
-            .navigationTitle("Nonit Reminders")
+            .navigationTitle("Reminders")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -42,9 +44,21 @@ struct ReminderListView: View {
                 
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
+                        showCallDiscoveryHint = false
+                        hasSeenCallDiscoveryHint = true
                         showingSettings = true
                     } label: {
                         Image(systemName: "gear")
+                    }
+                    .overlay(alignment: .topTrailing) {
+                        if showCallDiscoveryHint {
+                            CallDiscoveryHintView {
+                                showCallDiscoveryHint = false
+                                hasSeenCallDiscoveryHint = true
+                                showingSettings = true
+                            }
+                            .transition(.scale.combined(with: .opacity))
+                        }
                     }
                 }
             }
@@ -59,6 +73,16 @@ struct ReminderListView: View {
             }
             .refreshable {
                 await store.loadReminders()
+            }
+            .onAppear {
+                // Show discovery hint after delay if phone calls not enabled and hasn't been seen
+                if !store.callOnboardingCompleted && !hasSeenCallDiscoveryHint {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                            showCallDiscoveryHint = true
+                        }
+                    }
+                }
             }
         }
     }
@@ -257,61 +281,55 @@ struct SettingsView: View {
     @State private var showingCallOnboarding = false
     @State private var notificationsEnabled = false
     
+    // Computed binding for the toggle
+    private var phoneCallsEnabled: Binding<Bool> {
+        Binding(
+            get: { store.callOnboardingCompleted },
+            set: { newValue in
+                if newValue {
+                    // Turning on - show onboarding
+                    showingCallOnboarding = true
+                } else {
+                    // Turning off - clear data
+                    store.clearPhoneData()
+                }
+            }
+        )
+    }
+    
     var body: some View {
         NavigationStack {
             Form {
                 // Phone Call Setup Section
                 Section {
-                    if store.callOnboardingCompleted {
-                        // Completed state
+                    // Toggle row
+                    Toggle(isOn: phoneCallsEnabled) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "phone.fill")
+                                .foregroundStyle(store.callOnboardingCompleted ? .green : .secondary)
+                            Text("Phone Calls")
+                        }
+                    }
+                    
+                    // Show phone number and edit button when enabled
+                    if store.callOnboardingCompleted && !store.userPhoneNumber.isEmpty {
                         HStack {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
-                                .frame(width: 24)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Phone Calls Enabled")
-                                    .fontWeight(.medium)
-                                if !store.userPhoneNumber.isEmpty {
-                                    Text(store.userPhoneNumber)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
+                            Text(store.userPhoneNumber)
+                                .foregroundStyle(.secondary)
                             Spacer()
                             Button("Edit") {
                                 showingCallOnboarding = true
                             }
                             .font(.subheadline)
                         }
-                    } else {
-                        // Not set up state
-                        Button {
-                            showingCallOnboarding = true
-                        } label: {
-                            HStack {
-                                Image(systemName: "phone.circle.fill")
-                                    .font(.title2)
-                                    .foregroundStyle(.blue)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("Setup Phone Call Reminders")
-                                        .fontWeight(.medium)
-                                        .foregroundStyle(.primary)
-                                    Text("Get called for important reminders")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
                     }
                 } header: {
                     Text("Phone Call Reminders")
                 } footer: {
-                    if !store.callOnboardingCompleted {
-                        Text("Setup includes phone verification and adding our number to contacts")
+                    if store.callOnboardingCompleted {
+                        Text("We'll call you for high-priority reminders")
+                    } else {
+                        Text("Get called for your most important reminders")
                     }
                 }
                 
@@ -319,8 +337,7 @@ struct SettingsView: View {
                 Section {
                     HStack {
                         Image(systemName: notificationsEnabled ? "bell.badge.fill" : "bell.slash.fill")
-                            .foregroundStyle(notificationsEnabled ? .green : .red)
-                            .frame(width: 24)
+                            .foregroundStyle(notificationsEnabled ? .green : .secondary)
                         Text("Notifications")
                         Spacer()
                         Text(notificationsEnabled ? "On" : "Off")
@@ -385,6 +402,32 @@ struct SettingsView: View {
     }
 }
 
+
+// MARK: - Call Discovery Hint View
+struct CallDiscoveryHintView: View {
+    let onTap: () -> Void
+    
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: 6) {
+                Image(systemName: "phone.fill")
+                    .font(.caption)
+                Text("Enable call reminders")
+                    .font(.caption)
+                    .fontWeight(.medium)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.green.opacity(0.9))
+                    .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+            )
+            .foregroundColor(.white)
+        }
+        .offset(x: 40, y: 25)
+    }
+}
 
 
 // MARK: - Preview

@@ -51,7 +51,6 @@ class NotificationManager: ObservableObject {
         // Handle all notification types that use local notifications
         guard reminder.notificationLevel == .standard ||
               reminder.notificationLevel == .timeSensitive ||
-              reminder.notificationLevel == .alarmKit || // Falls back to time-sensitive
               reminder.notificationLevel == .phoneCall   // Backup notification
         else {
             return
@@ -78,7 +77,7 @@ class NotificationManager: ObservableObject {
         // Set interruption level based on notification level
         if #available(iOS 15.0, *) {
             switch reminder.notificationLevel {
-            case .timeSensitive, .alarmKit, .phoneCall:
+            case .timeSensitive, .phoneCall:
                 content.interruptionLevel = .timeSensitive
                 content.relevanceScore = 1.0
             default:

@@ -68,7 +68,7 @@ extension Reminder {
     )
     
     static let samples: [Reminder] = [
-        Reminder(title: "Take medication", dueDate: Date().addingTimeInterval(1800), notificationLevel: .alarmKit),
+        Reminder(title: "Take medication", dueDate: Date().addingTimeInterval(1800), notificationLevel: .timeSensitive),
         Reminder(title: "Call mom", dueDate: Date().addingTimeInterval(7200), notificationLevel: .standard),
         Reminder(title: "Submit report", dueDate: Date().addingTimeInterval(-3600), notificationLevel: .timeSensitive, isCompleted: true),
     ]

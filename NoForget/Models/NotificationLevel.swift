@@ -1,11 +1,10 @@
 import Foundation
 
-/// Represents the five escalating notification intensity levels
+/// Represents the four escalating notification intensity levels
 enum NotificationLevel: Int, CaseIterable, Codable, Identifiable {
     case standard = 1           // Standard local notification
     case timeSensitive = 2      // Time-sensitive (bypasses notification summary)
-    case liveActivity = 3       // Dynamic Island + Live Activity
-    case alarmKit = 4           // AlarmKit alarm (iOS 26+, currently disabled)
+    case liveActivity = 3       // Dynamic Island + Live Activity (coming soon)
     case phoneCall = 5          // Twilio phone call to user
     
     var id: Int { rawValue }
@@ -15,7 +14,6 @@ enum NotificationLevel: Int, CaseIterable, Codable, Identifiable {
         case .standard: return "Standard"
         case .timeSensitive: return "Time Sensitive"
         case .liveActivity: return "Live Activity"
-        case .alarmKit: return "Alarm"
         case .phoneCall: return "Phone Call"
         }
     }
@@ -28,8 +26,6 @@ enum NotificationLevel: Int, CaseIterable, Codable, Identifiable {
             return "Breaks through Focus modes and notification summary"
         case .liveActivity:
             return "Shows countdown in Dynamic Island until reminder time"
-        case .alarmKit:
-            return "System alarm (coming soon - falls back to Time Sensitive)"
         case .phoneCall:
             return "Calls your phone to ensure you don't miss it"
         }
@@ -40,7 +36,6 @@ enum NotificationLevel: Int, CaseIterable, Codable, Identifiable {
         case .standard: return "bell"
         case .timeSensitive: return "bell.badge"
         case .liveActivity: return "clock.badge.exclamationmark"
-        case .alarmKit: return "alarm"
         case .phoneCall: return "phone.fill"
         }
     }
@@ -50,25 +45,20 @@ enum NotificationLevel: Int, CaseIterable, Codable, Identifiable {
         case .standard: return "blue"
         case .timeSensitive: return "orange"
         case .liveActivity: return "purple"
-        case .alarmKit: return "red"
         case .phoneCall: return "green"
         }
     }
     
-    /// Check if this level is available on the current device
-    var isAvailable: Bool {
+    /// Check if this level is available
+    /// - Parameter callOnboardingCompleted: Whether phone call onboarding has been completed
+    func isAvailable(callOnboardingCompleted: Bool = true) -> Bool {
         switch self {
         case .standard, .timeSensitive:
             return true
         case .liveActivity:
-            if #available(iOS 16.1, *) {
-                return true
-            }
-            return false
-        case .alarmKit:
-            return false  // Disabled until AlarmKit API is finalized
+            return false  // Coming soon
         case .phoneCall:
-            return true  // Available if backend is configured
+            return callOnboardingCompleted
         }
     }
 }

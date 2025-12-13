@@ -204,182 +204,180 @@ struct CallOnboardingView: View {
     // MARK: - Step 2: Verify Phone
     
     private var step2VerifyPhone: some View {
-        VStack(spacing: 28) {
-            Spacer()
-            
-            // Hero icon
-            ZStack {
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            colors: [Color.green.opacity(0.2), Color.green.opacity(0.05)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+        ScrollView {
+            VStack(spacing: 28) {
+                Spacer(minLength: 40)
+                
+                // Hero icon
+                ZStack {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.green.opacity(0.2), Color.green.opacity(0.05)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
                         )
-                    )
-                    .frame(width: 120, height: 120)
+                        .frame(width: 120, height: 120)
+                    
+                    Image(systemName: "person.badge.shield.checkmark.fill")
+                        .font(.system(size: 56))
+                        .foregroundStyle(.green)
+                }
                 
-                Image(systemName: "person.badge.shield.checkmark.fill")
-                    .font(.system(size: 56))
-                    .foregroundStyle(.green)
-            }
-            
-            VStack(spacing: 8) {
-                Text("Verify Your Number")
-                    .font(.title2)
-                    .fontWeight(.bold)
+                VStack(spacing: 8) {
+                    Text("Verify Your Number")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    
+                    Text(codeSent ? "Enter the 6-digit code we sent to your phone." : "We'll send a verification code to confirm this is your phone.")
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
+                }
                 
-                Text(codeSent ? "Enter the 6-digit code we sent to your phone." : "We'll send a verification code to confirm this is your phone.")
-                    .font(.body)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 32)
-            }
-            
-            if !codeSent {
-                // Phone input section - clean, no container box
-                VStack(spacing: 16) {
-                    HStack(spacing: 12) {
-                        // Country picker
-                        Menu {
-                            ForEach(CountryCode.all) { country in
-                                Button {
-                                    selectedCountry = country
-                                } label: {
-                                    Text("\(country.flag) \(country.name) (\(country.code))")
+                if !codeSent {
+                    // Phone input section - clean, no container box
+                    VStack(spacing: 16) {
+                        HStack(spacing: 12) {
+                            // Country picker
+                            Menu {
+                                ForEach(CountryCode.all) { country in
+                                    Button {
+                                        selectedCountry = country
+                                    } label: {
+                                        Text("\(country.flag) \(country.name) (\(country.code))")
+                                    }
                                 }
+                            } label: {
+                                HStack(spacing: 6) {
+                                    Text(selectedCountry.flag)
+                                        .font(.title3)
+                                    Text(selectedCountry.code)
+                                        .font(.body)
+                                        .fontWeight(.medium)
+                                    Image(systemName: "chevron.down")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 14)
+                                .background(Color(.systemGray6))
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
-                        } label: {
-                            HStack(spacing: 6) {
-                                Text(selectedCountry.flag)
-                                    .font(.title3)
-                                Text(selectedCountry.code)
-                                    .font(.body)
-                                    .fontWeight(.medium)
-                                Image(systemName: "chevron.down")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 14)
+                            .foregroundStyle(.primary)
+                            
+                            // Phone number input
+                            TextField("(555) 123-4567", text: Binding(
+                                get: { formattedPhoneDisplay },
+                                set: { newValue in
+                                    let digits = newValue.filter { $0.isNumber }
+                                    let maxLength = selectedCountry.code == "+1" ? 10 : 12
+                                    rawPhoneNumber = String(digits.prefix(maxLength))
+                                }
+                            ))
+                            .keyboardType(.phonePad)
+                            .focused($isPhoneFieldFocused)
+                            .font(.body)
+                            .padding()
                             .background(Color(.systemGray6))
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
-                        .foregroundStyle(.primary)
+                    }
+                    .padding(.horizontal, 24)
+                } else {
+                    // Verification code section - tappable to focus
+                    VStack(spacing: 20) {
+                        // Display phone number being verified
+                        Text(phoneNumber)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
                         
-                        // Phone number input
-                        TextField("(555) 123-4567", text: Binding(
-                            get: { formattedPhoneDisplay },
-                            set: { newValue in
-                                let digits = newValue.filter { $0.isNumber }
-                                let maxLength = selectedCountry.code == "+1" ? 10 : 12
-                                rawPhoneNumber = String(digits.prefix(maxLength))
+                        // Tappable digit boxes
+                        HStack(spacing: 10) {
+                            ForEach(0..<6, id: \.self) { index in
+                                Text(index < verificationCode.count ? String(verificationCode[verificationCode.index(verificationCode.startIndex, offsetBy: index)]) : "")
+                                    .font(.title)
+                                    .fontWeight(.semibold)
+                                    .frame(width: 48, height: 60)
+                                    .background(Color(.systemGray6))
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(isCodeFieldFocused && index == verificationCode.count ? Color.blue : Color.clear, lineWidth: 2)
+                                    )
                             }
-                        ))
-                        .keyboardType(.phonePad)
-                        .focused($isPhoneFieldFocused)
-                        .font(.body)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .onTapGesture {
+                            isCodeFieldFocused = true
+                        }
+                        
+                        // Hidden text field for code input - with focus binding
+                        TextField("", text: $verificationCode)
+                            .keyboardType(.numberPad)
+                            .textContentType(.oneTimeCode)
+                            .focused($isCodeFieldFocused)
+                            .frame(width: 1, height: 1)
+                            .opacity(0.01)
+                            .onChange(of: verificationCode) { oldValue, newValue in
+                                verificationCode = String(newValue.prefix(6).filter { $0.isNumber })
+                                if verificationCode.count == 6 && !isVerified {
+                                    verifyCode()
+                                }
+                            }
+                        
+                        if isVerified {
+                            HStack(spacing: 8) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundStyle(.green)
+                                Text("Verified")
+                                    .fontWeight(.medium)
+                            }
+                            .font(.headline)
+                            .foregroundStyle(.green)
+                            .transition(.scale.combined(with: .opacity))
+                        } else {
+                            Button("Resend Code") {
+                                sendVerificationCode()
+                            }
+                            .font(.subheadline)
+                            .foregroundStyle(.blue)
+                        }
                     }
+                    .padding(.horizontal, 24)
                 }
-                .padding(.horizontal, 24)
-            } else {
-                // Verification code section - tappable to focus
-                VStack(spacing: 20) {
-                    // Display phone number being verified
-                    Text(phoneNumber)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                    
-                    // Tappable digit boxes
-                    HStack(spacing: 10) {
-                        ForEach(0..<6, id: \.self) { index in
-                            Text(index < verificationCode.count ? String(verificationCode[verificationCode.index(verificationCode.startIndex, offsetBy: index)]) : "")
-                                .font(.title)
-                                .fontWeight(.semibold)
-                                .frame(width: 48, height: 60)
-                                .background(Color(.systemGray6))
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(isCodeFieldFocused && index == verificationCode.count ? Color.blue : Color.clear, lineWidth: 2)
-                                )
-                        }
-                    }
-                    .onTapGesture {
-                        isCodeFieldFocused = true
-                    }
-                    
-                    // Hidden text field for code input - with focus binding
-                    TextField("", text: $verificationCode)
-                        .keyboardType(.numberPad)
-                        .textContentType(.oneTimeCode)
-                        .focused($isCodeFieldFocused)
-                        .frame(width: 1, height: 1)
-                        .opacity(0.01)
-                        .onChange(of: verificationCode) { oldValue, newValue in
-                            verificationCode = String(newValue.prefix(6).filter { $0.isNumber })
-                            if verificationCode.count == 6 && !isVerified {
-                                verifyCode()
-                            }
-                        }
-                    
-                    if isVerified {
+                
+                Spacer(minLength: 60)
+                
+                // Bottom button - consistent with home screen style
+                if !codeSent {
+                    Button {
+                        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                        impactFeedback.impactOccurred()
+                        sendVerificationCode()
+                    } label: {
                         HStack(spacing: 8) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
-                            Text("Verified")
-                                .fontWeight(.medium)
+                            if isLoading {
+                                ProgressView()
+                                    .tint(.white)
+                            }
+                            Text("Send Verification Code")
                         }
                         .font(.headline)
-                        .foregroundStyle(.green)
-                        .transition(.scale.combined(with: .opacity))
-                    } else {
-                        Button("Resend Code") {
-                            sendVerificationCode()
-                        }
-                        .font(.subheadline)
-                        .foregroundStyle(.blue)
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 14)
+                        .background(rawPhoneNumber.count >= 7 ? Color.blue : Color(.systemGray4))
+                        .foregroundColor(.white)
+                        .clipShape(Capsule())
                     }
+                    .disabled(rawPhoneNumber.count < 7 || isLoading)
+                    .padding(.bottom, 32)
                 }
-                .padding(.horizontal, 24)
             }
-            
-            Spacer()
-            
-            // Bottom button - consistent with home screen style
-            if !codeSent {
-                Button {
-                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-                    impactFeedback.impactOccurred()
-                    sendVerificationCode()
-                } label: {
-                    HStack(spacing: 8) {
-                        if isLoading {
-                            ProgressView()
-                                .tint(.white)
-                        }
-                        Text("Send Verification Code")
-                    }
-                    .font(.headline)
-                    .padding(.horizontal, 32)
-                    .padding(.vertical, 14)
-                    .background(rawPhoneNumber.count >= 7 ? Color.blue : Color(.systemGray4))
-                    .foregroundColor(.white)
-                    .clipShape(Capsule())
-                }
-                .disabled(rawPhoneNumber.count < 7 || isLoading)
-                .padding(.bottom, 32)
-            }
+            .frame(minHeight: UIScreen.main.bounds.height - 200)
         }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            // Dismiss keyboard when tapping outside input fields
-            isPhoneFieldFocused = false
-            isCodeFieldFocused = false
-        }
+        .scrollDismissesKeyboard(.interactively)
     }
     
     // MARK: - Step 3: Add Contact

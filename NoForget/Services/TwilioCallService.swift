@@ -21,25 +21,14 @@ struct ScheduleResponse: Codable {
 /// Service for initiating Twilio phone calls (Level 5)
 @MainActor
 class TwilioCallService: ObservableObject {
-    @Published var isConfigured = false
+    @Published var isConfigured = true
     @Published var lastCallStatus: String?
     
-    // Configure this with your backend URL
-    private var backendURL: String = ""
+    // Production backend URL - no configuration needed
+    private let backendURL: String = "https://noforget-backend.onrender.com"
     
     init() {
-        // Load backend URL from UserDefaults or configuration
-        if let savedURL = UserDefaults.standard.string(forKey: "twilioBackendURL") {
-            backendURL = savedURL
-            isConfigured = !savedURL.isEmpty
-        }
-    }
-    
-    /// Configure the backend URL
-    func configure(backendURL: String) {
-        self.backendURL = backendURL
-        UserDefaults.standard.set(backendURL, forKey: "twilioBackendURL")
-        isConfigured = !backendURL.isEmpty
+        // Backend is pre-configured, no setup required
     }
     
     /// Schedule a phone call for a reminder (calls at the reminder's due time)

@@ -1,4 +1,5 @@
 import SwiftUI
+import UserNotifications
 
 /// Main list view displaying all reminders
 struct ReminderListView: View {
@@ -253,103 +254,90 @@ struct SettingsView: View {
     @EnvironmentObject var store: ReminderStore
     @Environment(\.dismiss) var dismiss
     
-    @State private var phoneNumber: String = ""
-    @State private var twilioBackendURL: String = ""
+    @State private var showingCallOnboarding = false
+    @State private var notificationsEnabled = false
     
     var body: some View {
         NavigationStack {
             Form {
                 // Phone Call Setup Section
                 Section {
-                    // Phone number input
-                    HStack {
-                        Image(systemName: "phone.fill")
-                            .foregroundStyle(.green)
-                            .frame(width: 24)
-                        TextField("+1234567890", text: $phoneNumber)
-                            .textContentType(.telephoneNumber)
-                            .keyboardType(.phonePad)
-                        
-                        if !phoneNumber.isEmpty && phoneNumber != store.userPhoneNumber {
-                            Button("Save") {
-                                store.savePhoneNumber(phoneNumber)
-                            }
-                            .fontWeight(.semibold)
-                        }
-                    }
-                    
-                    // Backend URL input
-                    HStack {
-                        Image(systemName: "server.rack")
-                            .foregroundStyle(.blue)
-                            .frame(width: 24)
-                        TextField("Backend URL", text: $twilioBackendURL)
-                            .textContentType(.URL)
-                            .autocapitalization(.none)
-                            .keyboardType(.URL)
-                        
-                        if !twilioBackendURL.isEmpty {
-                            Button("Save") {
-                                store.twilioService.configure(backendURL: twilioBackendURL)
-                            }
-                            .fontWeight(.semibold)
-                        }
-                    }
-                    
-                    // Status indicator
-                    if store.twilioService.isConfigured && !store.userPhoneNumber.isEmpty {
+                    if store.callOnboardingCompleted {
+                        // Completed state
                         HStack {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundStyle(.green)
-                            Text("Phone calls enabled")
-                                .foregroundStyle(.secondary)
+                                .frame(width: 24)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Phone Calls Enabled")
+                                    .fontWeight(.medium)
+                                if !store.userPhoneNumber.isEmpty {
+                                    Text(store.userPhoneNumber)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            Spacer()
+                            Button("Edit") {
+                                showingCallOnboarding = true
+                            }
+                            .font(.subheadline)
+                        }
+                    } else {
+                        // Not set up state
+                        Button {
+                            showingCallOnboarding = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "phone.circle.fill")
+                                    .font(.title2)
+                                    .foregroundStyle(.blue)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Setup Phone Call Reminders")
+                                        .fontWeight(.medium)
+                                        .foregroundStyle(.primary)
+                                    Text("Get called for important reminders")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
                 } header: {
                     Text("Phone Call Reminders")
                 } footer: {
-                    Text("Enter your phone number (e.g. +14155551234) and backend URL to enable call reminders")
+                    if !store.callOnboardingCompleted {
+                        Text("Setup includes phone verification and adding our number to contacts")
+                    }
                 }
                 
-                // Notifications & Sync Section
+                // Notifications Section
                 Section {
-                    // Notifications row
                     HStack {
-                        Image(systemName: store.notificationManager.isAuthorized ? "bell.badge.fill" : "bell.slash.fill")
-                            .foregroundStyle(store.notificationManager.isAuthorized ? .green : .red)
+                        Image(systemName: notificationsEnabled ? "bell.badge.fill" : "bell.slash.fill")
+                            .foregroundStyle(notificationsEnabled ? .green : .red)
                             .frame(width: 24)
                         Text("Notifications")
                         Spacer()
-                        Text(store.notificationManager.isAuthorized ? "On" : "Off")
+                        Text(notificationsEnabled ? "On" : "Off")
                             .foregroundStyle(.secondary)
                     }
                     
-                    if !store.notificationManager.isAuthorized {
+                    if !notificationsEnabled {
                         Button {
-                            Task {
-                                await store.notificationManager.requestAuthorization()
+                            if let url = URL(string: UIApplication.openSettingsURLString) {
+                                UIApplication.shared.open(url)
                             }
                         } label: {
-                            Text("Enable Notifications")
-                        }
-                    }
-                    
-                    // iCloud row
-                    HStack {
-                        Image(systemName: store.cloudKitEnabled ? "icloud.fill" : "icloud.slash")
-                            .foregroundStyle(store.cloudKitEnabled ? .blue : .secondary)
-                            .frame(width: 24)
-                        Text("iCloud Sync")
-                        Spacer()
-                        if store.isSyncing {
-                            ProgressView()
-                        } else {
-                            Text(store.cloudKitEnabled ? "On" : "Off")
-                                .foregroundStyle(.secondary)
+                            Text("Open Settings to Enable")
                         }
                     }
                 } header: {
-                    Text("Notifications & Sync")
+                    Text("Notifications")
                 }
                 
                 // About Section
@@ -380,12 +368,23 @@ struct SettingsView: View {
                 }
             }
             .onAppear {
-                phoneNumber = store.userPhoneNumber
-                twilioBackendURL = UserDefaults.standard.string(forKey: "twilioBackendURL") ?? ""
+                checkNotificationStatus()
+            }
+            .sheet(isPresented: $showingCallOnboarding) {
+                CallOnboardingView()
+            }
+        }
+    }
+    
+    private func checkNotificationStatus() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                notificationsEnabled = settings.authorizationStatus == .authorized
             }
         }
     }
 }
+
 
 
 // MARK: - Preview

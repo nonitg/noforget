@@ -16,6 +16,8 @@
 		951E5A96FBDDE4344B95E249 /* ReminderStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405B4CD421F9E092417689C1 /* ReminderStore.swift */; };
 		97A5E1AB4EC4D15ED94045CA /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C660DE862AAA4F548D3294 /* Reminder.swift */; };
 		99DBD6C51D14546A819729F4 /* ReminderAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B8811B15923D4967531B3D6 /* ReminderAttributes.swift */; };
+		AF8B8D622EECEE800095E620 /* ContactService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF8B8D612EECEE800095E620 /* ContactService.swift */; };
+		AF8B8D642EECEE8D0095E620 /* CallOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF8B8D632EECEE8D0095E620 /* CallOnboardingView.swift */; };
 		C0BEF754185A6F1892F96CD7 /* NoForgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF77CACA030CE0789FABCF96 /* NoForgetApp.swift */; };
 		CD9B4E490CE455B2BBE8498F /* ReminderAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B8811B15923D4967531B3D6 /* ReminderAttributes.swift */; };
 		E5B16A2F1F674DB20975913B /* ReminderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0C9CD4EED43FE77001477B /* ReminderDetailView.swift */; };
@@ -35,6 +37,8 @@
 		8D774795138DB566F13C5781 /* NotificationLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationLevel.swift; sourceTree = "<group>"; };
 		9B8811B15923D4967531B3D6 /* ReminderAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderAttributes.swift; sourceTree = "<group>"; };
 		AD0C9CD4EED43FE77001477B /* ReminderDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDetailView.swift; sourceTree = "<group>"; };
+		AF8B8D612EECEE800095E620 /* ContactService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactService.swift; sourceTree = "<group>"; };
+		AF8B8D632EECEE8D0095E620 /* CallOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallOnboardingView.swift; sourceTree = "<group>"; };
 		B18606FD264EF0245A14AC62 /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
 		BF77CACA030CE0789FABCF96 /* NoForgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoForgetApp.swift; sourceTree = "<group>"; };
 		E27D5E03A23F6342B6955D7C /* ReminderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderListView.swift; sourceTree = "<group>"; };
@@ -86,6 +90,7 @@
 		9B752EFD0AB81E95E8582CC0 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				AF8B8D612EECEE800095E620 /* ContactService.swift */,
 				864ED7F7BFF3020C67405989 /* AlarmKitManager.swift */,
 				B18606FD264EF0245A14AC62 /* LiveActivityManager.swift */,
 				46507410E2A7C3C22B39994B /* NotificationManager.swift */,
@@ -98,6 +103,7 @@
 		A5EAE101D9F5919C5784608B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				AF8B8D632EECEE8D0095E620 /* CallOnboardingView.swift */,
 				AD0C9CD4EED43FE77001477B /* ReminderDetailView.swift */,
 				E27D5E03A23F6342B6955D7C /* ReminderListView.swift */,
 			);
@@ -190,7 +196,9 @@
 				97A5E1AB4EC4D15ED94045CA /* Reminder.swift in Sources */,
 				99DBD6C51D14546A819729F4 /* ReminderAttributes.swift in Sources */,
 				E5B16A2F1F674DB20975913B /* ReminderDetailView.swift in Sources */,
+				AF8B8D622EECEE800095E620 /* ContactService.swift in Sources */,
 				854D12BD071FF0BFB06FCAF2 /* ReminderListView.swift in Sources */,
+				AF8B8D642EECEE8D0095E620 /* CallOnboardingView.swift in Sources */,
 				951E5A96FBDDE4344B95E249 /* ReminderStore.swift in Sources */,
 				2813CE50207DC13FC02C643E /* TwilioCallService.swift in Sources */,
 			);

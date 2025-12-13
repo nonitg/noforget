@@ -248,6 +248,103 @@ app.get('/health', (req, res) => {
     });
 });
 
+// App info endpoint - provides Twilio number for onboarding
+app.get('/info', (req, res) => {
+    res.json({
+        twilioNumber: twilioNumber,
+        appName: 'NoForget',
+        contactName: 'Remind Line'
+    });
+});
+
+// ============================================
+// PHONE VERIFICATION (Twilio Verify)
+// ============================================
+
+// Send verification code via SMS
+app.post('/verify/send', async (req, res) => {
+    try {
+        const { phoneNumber } = req.body;
+
+        if (!phoneNumber) {
+            return res.status(400).json({ error: 'Phone number is required' });
+        }
+
+        const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
+        if (!verifyServiceSid) {
+            return res.status(500).json({ error: 'Verification service not configured' });
+        }
+
+        const verification = await client.verify.v2
+            .services(verifyServiceSid)
+            .verifications.create({
+                to: phoneNumber,
+                channel: 'sms'
+            });
+
+        console.log(`📱 Verification sent to ${phoneNumber}: ${verification.status}`);
+
+        res.json({
+            status: verification.status,
+            message: 'Verification code sent'
+        });
+
+    } catch (error) {
+        console.error('Error sending verification:', error);
+        res.status(500).json({
+            error: 'Failed to send verification',
+            message: error.message
+        });
+    }
+});
+
+// Check verification code
+app.post('/verify/check', async (req, res) => {
+    try {
+        const { phoneNumber, code } = req.body;
+
+        if (!phoneNumber || !code) {
+            return res.status(400).json({ error: 'Phone number and code are required' });
+        }
+
+        const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
+        if (!verifyServiceSid) {
+            return res.status(500).json({ error: 'Verification service not configured' });
+        }
+
+        const verificationCheck = await client.verify.v2
+            .services(verifyServiceSid)
+            .verificationChecks.create({
+                to: phoneNumber,
+                code: code
+            });
+
+        console.log(`✅ Verification check for ${phoneNumber}: ${verificationCheck.status}`);
+
+        res.json({
+            status: verificationCheck.status,
+            valid: verificationCheck.status === 'approved'
+        });
+
+    } catch (error) {
+        console.error('Error checking verification:', error);
+
+        // Handle specific Twilio errors
+        if (error.code === 20404) {
+            return res.status(400).json({
+                error: 'Invalid or expired code',
+                valid: false
+            });
+        }
+
+        res.status(500).json({
+            error: 'Failed to check verification',
+            message: error.message,
+            valid: false
+        });
+    }
+});
+
 // Schedule a call for later
 app.post('/schedule', async (req, res) => {
     try {

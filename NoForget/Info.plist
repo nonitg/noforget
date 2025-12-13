@@ -53,6 +53,10 @@
     <key>NSAlarmKitUsageDescription</key>
     <string>NoForget needs alarm access to ensure you never miss critical reminders, even when your phone is on silent.</string>
     
+    <!-- Contacts Usage Description -->
+    <key>NSContactsUsageDescription</key>
+    <string>NoForget can add our reminder phone number to your contacts so you can enable Emergency Bypass and never miss an important call.</string>
+    
     <!-- Background Modes -->
     <key>UIBackgroundModes</key>
     <array>

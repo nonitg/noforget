@@ -47,6 +47,15 @@ class ReminderStore: ObservableObject {
         UserDefaults.standard.set(number, forKey: phoneNumberKey)
     }
     
+    // MARK: - Call Onboarding State
+    
+    @Published var callOnboardingCompleted: Bool = UserDefaults.standard.bool(forKey: "callOnboardingCompleted")
+    
+    func setCallOnboardingCompleted(_ completed: Bool) {
+        callOnboardingCompleted = completed
+        UserDefaults.standard.set(completed, forKey: "callOnboardingCompleted")
+    }
+    
     // MARK: - CloudKit Availability
     
     private func checkCloudKitAvailability() async {

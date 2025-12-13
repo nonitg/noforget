@@ -47,6 +47,7 @@ struct CallOnboardingView: View {
     
     // Focus state for auto-focusing verification code input
     @FocusState private var isCodeFieldFocused: Bool
+    @FocusState private var isPhoneFieldFocused: Bool
     
     // Computed full phone number with country code
     private var phoneNumber: String {
@@ -89,15 +90,17 @@ struct CallOnboardingView: View {
                     .padding(.horizontal)
                     .padding(.top)
                 
-                // Step content
-                TabView(selection: $currentStep) {
-                    step1Welcome.tag(1)
-                    step2VerifyPhone.tag(2)
-                    step3AddContact.tag(3)
-                    step4EmergencyBypass.tag(4)
-                    step5Complete.tag(5)
+                // Step content - using switch instead of TabView to prevent swipe navigation
+                Group {
+                    switch currentStep {
+                    case 1: step1Welcome
+                    case 2: step2VerifyPhone
+                    case 3: step3AddContact
+                    case 4: step4EmergencyBypass
+                    case 5: step5Complete
+                    default: step1Welcome
+                    }
                 }
-                .tabViewStyle(.page(indexDisplayMode: .never))
                 .animation(.easeInOut, value: currentStep)
             }
             .navigationTitle("Setup Phone Calls")
@@ -274,6 +277,7 @@ struct CallOnboardingView: View {
                             }
                         ))
                         .keyboardType(.phonePad)
+                        .focused($isPhoneFieldFocused)
                         .font(.body)
                         .padding()
                         .background(Color(.systemGray6))
@@ -369,6 +373,12 @@ struct CallOnboardingView: View {
                 .disabled(rawPhoneNumber.count < 7 || isLoading)
                 .padding(.bottom, 32)
             }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            // Dismiss keyboard when tapping outside input fields
+            isPhoneFieldFocused = false
+            isCodeFieldFocused = false
         }
     }
     
@@ -848,6 +858,8 @@ struct CallOnboardingView: View {
                     await MainActor.run {
                         if valid {
                             isVerified = true
+                            // Dismiss keyboard
+                            isCodeFieldFocused = false
                             // Haptic feedback for success
                             let successFeedback = UINotificationFeedbackGenerator()
                             successFeedback.notificationOccurred(.success)

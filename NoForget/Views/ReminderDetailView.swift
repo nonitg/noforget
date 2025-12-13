@@ -105,6 +105,14 @@ struct ReminderDetailView: View {
                     .disabled(title.isEmpty || isSaving)
                     .fontWeight(.semibold)
                 }
+                
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") {
+                        // Dismiss keyboard
+                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                    }
+                }
             }
             .alert("Error", isPresented: $showingError) {
                 Button("OK") {}

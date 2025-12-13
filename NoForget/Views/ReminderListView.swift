@@ -10,8 +10,6 @@ struct ReminderListView: View {
     @State private var showingDetail = false
     @State private var selectedReminder: Reminder?
     @State private var showingSettings = false
-    @State private var showCallDiscoveryHint = false
-    @AppStorage("hasSeenCallDiscoveryHint") private var hasSeenCallDiscoveryHint = false
     
     var body: some View {
         NavigationStack {
@@ -44,21 +42,9 @@ struct ReminderListView: View {
                 
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
-                        showCallDiscoveryHint = false
-                        hasSeenCallDiscoveryHint = true
                         showingSettings = true
                     } label: {
                         Image(systemName: "gear")
-                    }
-                    .overlay(alignment: .topTrailing) {
-                        if showCallDiscoveryHint {
-                            CallDiscoveryHintView {
-                                showCallDiscoveryHint = false
-                                hasSeenCallDiscoveryHint = true
-                                showingSettings = true
-                            }
-                            .transition(.scale.combined(with: .opacity))
-                        }
                     }
                 }
             }
@@ -74,16 +60,7 @@ struct ReminderListView: View {
             .refreshable {
                 await store.loadReminders()
             }
-            .onAppear {
-                // Show discovery hint after delay if phone calls not enabled and hasn't been seen
-                if !store.callOnboardingCompleted && !hasSeenCallDiscoveryHint {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-                            showCallDiscoveryHint = true
-                        }
-                    }
-                }
-            }
+
         }
     }
     
@@ -403,31 +380,6 @@ struct SettingsView: View {
 }
 
 
-// MARK: - Call Discovery Hint View
-struct CallDiscoveryHintView: View {
-    let onTap: () -> Void
-    
-    var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: 6) {
-                Image(systemName: "phone.fill")
-                    .font(.caption)
-                Text("Enable call reminders")
-                    .font(.caption)
-                    .fontWeight(.medium)
-            }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.green.opacity(0.9))
-                    .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
-            )
-            .foregroundColor(.white)
-        }
-        .offset(x: 40, y: 25)
-    }
-}
 
 
 // MARK: - Preview

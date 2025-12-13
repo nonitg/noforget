@@ -38,7 +38,6 @@
 		AD0C9CD4EED43FE77001477B /* ReminderDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDetailView.swift; sourceTree = "<group>"; };
 		AF8B8D612EECEE800095E620 /* ContactService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactService.swift; sourceTree = "<group>"; };
 		AF8B8D632EECEE8D0095E620 /* CallOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallOnboardingView.swift; sourceTree = "<group>"; };
-		AF8B8D652EED33F70095E620 /* dontforget.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = dontforget.icon; sourceTree = "<group>"; };
 		B18606FD264EF0245A14AC62 /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
 		BF77CACA030CE0789FABCF96 /* NoForgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoForgetApp.swift; sourceTree = "<group>"; };
 		E27D5E03A23F6342B6955D7C /* ReminderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderListView.swift; sourceTree = "<group>"; };
@@ -61,7 +60,6 @@
 			children = (
 				8D774795138DB566F13C5781 /* NotificationLevel.swift */,
 				89C660DE862AAA4F548D3294 /* Reminder.swift */,
-				AF8B8D652EED33F70095E620 /* dontforget.icon */,
 				9B8811B15923D4967531B3D6 /* ReminderAttributes.swift */,
 			);
 			path = Models;

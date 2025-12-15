@@ -55,6 +55,8 @@ struct ReminderDetailView: View {
                             isAvailable: level.isAvailable(callOnboardingCompleted: store.callOnboardingCompleted)
                         ) {
                             if level.isAvailable(callOnboardingCompleted: store.callOnboardingCompleted) {
+                                let selection = UISelectionFeedbackGenerator()
+                                selection.selectionChanged()
                                 notificationLevel = level
                             } else if level == .phoneCall {
                                 showingEnableCallsAlert = true
@@ -167,6 +169,10 @@ struct ReminderDetailView: View {
                     try await store.addReminder(newReminder)
                 }
                 
+                // Haptic feedback on success
+                let success = UINotificationFeedbackGenerator()
+                success.notificationOccurred(.success)
+                
                 dismiss()
             } catch {
                 errorMessage = error.localizedDescription
@@ -190,9 +196,9 @@ struct NotificationLevelRow: View {
             HStack(spacing: 12) {
                 Image(systemName: level.icon)
                     .font(.title2)
-                    .foregroundStyle(levelColor)
+                    .foregroundStyle(level.levelColor)
                     .frame(width: 36, height: 36)
-                    .background(levelColor.opacity(0.15))
+                    .background(level.levelColor.opacity(0.15))
                     .clipShape(Circle())
                 
                 VStack(alignment: .leading, spacing: 2) {
@@ -231,17 +237,6 @@ struct NotificationLevelRow: View {
         .buttonStyle(.plain)
         .disabled(!isAvailable)
         .opacity(isAvailable ? 1 : 0.6)
-    }
-    
-    private var levelColor: Color {
-        switch level.color {
-        case "blue": return .blue
-        case "orange": return .orange
-        case "purple": return .purple
-        case "red": return .red
-        case "green": return .green
-        default: return .blue
-        }
     }
     
     private var unavailableReason: String {

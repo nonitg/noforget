@@ -10,6 +10,7 @@ struct ReminderListView: View {
     @State private var showingDetail = false
     @State private var selectedReminder: Reminder?
     @State private var showingSettings = false
+    @State private var isCompletedExpanded = false
     
     var body: some View {
         NavigationStack {
@@ -32,6 +33,8 @@ struct ReminderListView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
+                        let impact = UIImpactFeedbackGenerator(style: .light)
+                        impact.impactOccurred()
                         showingQuickAdd = true
                     } label: {
                         Image(systemName: "plus")
@@ -80,6 +83,8 @@ struct ReminderListView: View {
                 .foregroundStyle(.secondary)
             
             Button {
+                let impact = UIImpactFeedbackGenerator(style: .light)
+                impact.impactOccurred()
                 showingQuickAdd = true
             } label: {
                 Label("Add Reminder", systemImage: "plus")
@@ -90,6 +95,7 @@ struct ReminderListView: View {
                     .foregroundColor(.white)
                     .clipShape(Capsule())
             }
+            .buttonStyle(ScaleButtonStyle())
             .padding(.top)
         }
     }
@@ -98,72 +104,163 @@ struct ReminderListView: View {
         List {
             // Overdue section
             if !store.overdueReminders.isEmpty {
-                Section {
-                    ForEach(store.overdueReminders) { reminder in
-                        ReminderRow(reminder: reminder)
-                            .onTapGesture {
-                                selectedReminder = reminder
-                            }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                deleteButton(for: reminder)
-                            }
-                            .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                                completeButton(for: reminder)
-                            }
-                    }
-                } header: {
-                    Label("Overdue", systemImage: "exclamationmark.circle.fill")
-                        .foregroundColor(.red)
-                        .font(.headline)
-                }
+                overdueSection
             }
             
-            // Upcoming section
-            if !store.upcomingReminders.isEmpty {
-                Section {
-                    ForEach(store.upcomingReminders) { reminder in
-                        ReminderRow(reminder: reminder)
-                            .onTapGesture {
-                                selectedReminder = reminder
-                            }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                deleteButton(for: reminder)
-                            }
-                            .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                                completeButton(for: reminder)
-                            }
-                    }
-                } header: {
-                    Label("Upcoming", systemImage: "clock")
-                        .font(.headline)
+            // Smart sorting: use Today/Tomorrow/Later when many reminders, otherwise simple Upcoming
+            if store.shouldUseGranularSections {
+                if !store.todayReminders.isEmpty {
+                    todaySection
                 }
+                if !store.tomorrowReminders.isEmpty {
+                    tomorrowSection
+                }
+                if !store.laterReminders.isEmpty {
+                    laterSection
+                }
+            } else if !store.upcomingReminders.isEmpty {
+                upcomingSection
             }
             
-            // Completed section
+            // Completed section (collapsible)
             if !store.completedReminders.isEmpty {
-                Section {
-                    ForEach(store.completedReminders) { reminder in
-                        ReminderRow(reminder: reminder)
-                            .onTapGesture {
-                                selectedReminder = reminder
-                            }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                deleteButton(for: reminder)
-                            }
-                    }
-                } header: {
-                    Label("Completed", systemImage: "checkmark.circle")
-                        .font(.headline)
-                }
+                completedSection
             }
         }
         .listStyle(.insetGrouped)
+        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: store.reminders)
+    }
+    
+    // MARK: - Section Views
+    
+    private var overdueSection: some View {
+        Section {
+            reminderRows(for: store.overdueReminders, allowComplete: true, allowUncomplete: false)
+        } header: {
+            Label("Overdue", systemImage: "exclamationmark.circle")
+                .font(.subheadline.weight(.medium))
+                .foregroundColor(.red)
+        }
+    }
+    
+    private var upcomingSection: some View {
+        Section {
+            reminderRows(for: store.upcomingReminders, allowComplete: true, allowUncomplete: false)
+        } header: {
+            Label("Upcoming", systemImage: "clock")
+                .font(.subheadline.weight(.medium))
+                .foregroundColor(.secondary)
+        }
+    }
+    
+    private var todaySection: some View {
+        Section {
+            reminderRows(for: store.todayReminders, allowComplete: true, allowUncomplete: false)
+        } header: {
+            Label("Today", systemImage: "sun.max")
+                .font(.subheadline.weight(.medium))
+                .foregroundColor(.secondary)
+        }
+    }
+    
+    private var tomorrowSection: some View {
+        Section {
+            reminderRows(for: store.tomorrowReminders, allowComplete: true, allowUncomplete: false)
+        } header: {
+            Label("Tomorrow", systemImage: "sunrise")
+                .font(.subheadline.weight(.medium))
+                .foregroundColor(.secondary)
+        }
+    }
+    
+    private var laterSection: some View {
+        Section {
+            reminderRows(for: store.laterReminders, allowComplete: true, allowUncomplete: false)
+        } header: {
+            Label("Later", systemImage: "calendar")
+                .font(.subheadline.weight(.medium))
+                .foregroundColor(.secondary)
+        }
+    }
+    
+    private var completedSection: some View {
+        Section {
+            if isCompletedExpanded {
+                reminderRows(for: store.completedReminders, allowComplete: false, allowUncomplete: true)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        } header: {
+            Button {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    isCompletedExpanded.toggle()
+                }
+                let impact = UIImpactFeedbackGenerator(style: .light)
+                impact.impactOccurred()
+            } label: {
+                HStack {
+                    Label("Completed (\(store.completedReminders.count))", systemImage: "checkmark.circle")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundColor(.secondary.opacity(0.5))
+                        .rotationEffect(.degrees(isCompletedExpanded ? 90 : 0))
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
+    }
+    
+    // MARK: - Reminder Rows Helper
+    
+    @ViewBuilder
+    private func reminderRows(for reminders: [Reminder], allowComplete: Bool, allowUncomplete: Bool) -> some View {
+        ForEach(Array(reminders.enumerated()), id: \.element.id) { index, reminder in
+            VStack(spacing: 0) {
+                ReminderRow(reminder: reminder)
+                    .padding(.vertical, 8)
+                    .onTapGesture {
+                        let selection = UISelectionFeedbackGenerator()
+                        selection.selectionChanged()
+                        selectedReminder = reminder
+                    }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        deleteButton(for: reminder)
+                    }
+                    .swipeActions(edge: .leading, allowsFullSwipe: allowComplete || (allowUncomplete && reminder.dueDate > Date())) {
+                        if allowComplete {
+                            completeButton(for: reminder)
+                        } else if allowUncomplete && reminder.dueDate > Date() {
+                            uncompleteButton(for: reminder)
+                        }
+                    }
+                
+                // Divider between rows (not after last one)
+                if index < reminders.count - 1 {
+                    Divider()
+                        .padding(.leading, 56)
+                }
+            }
+            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+            .listRowSeparator(.hidden)
+            .listRowBackground(
+                RoundedCornersShape(
+                    corners: cornerMask(for: index, in: reminders),
+                    radius: 10
+                )
+                .fill(Color(.secondarySystemGroupedBackground))
+            )
+        }
     }
     
     // MARK: - Actions
     
     private func deleteButton(for reminder: Reminder) -> some View {
         Button(role: .destructive) {
+            let impact = UIImpactFeedbackGenerator(style: .medium)
+            impact.impactOccurred()
             Task {
                 try? await store.deleteReminder(reminder)
             }
@@ -174,6 +271,8 @@ struct ReminderListView: View {
     
     private func completeButton(for reminder: Reminder) -> some View {
         Button {
+            let notification = UINotificationFeedbackGenerator()
+            notification.notificationOccurred(.success)
             Task {
                 try? await store.completeReminder(reminder)
             }
@@ -181,6 +280,57 @@ struct ReminderListView: View {
             Label("Complete", systemImage: "checkmark")
         }
         .tint(.green)
+    }
+    
+    private func uncompleteButton(for reminder: Reminder) -> some View {
+        Button {
+            let notification = UINotificationFeedbackGenerator()
+            notification.notificationOccurred(.success)
+            Task {
+                try? await store.uncompleteReminder(reminder)
+            }
+        } label: {
+            Label("Restore", systemImage: "arrow.uturn.backward")
+        }
+        .tint(.orange)
+    }
+    
+    // MARK: - Corner Helpers
+    
+    private func cornerMask(for index: Int, in reminders: [Reminder]) -> UIRectCorner {
+        if reminders.count == 1 {
+            return .allCorners
+        } else if index == 0 {
+            return [.topLeft, .topRight]
+        } else if index == reminders.count - 1 {
+            return [.bottomLeft, .bottomRight]
+        } else {
+            return []
+        }
+    }
+}
+
+// MARK: - Rounded Corners Shape
+struct RoundedCornersShape: Shape {
+    var corners: UIRectCorner
+    var radius: CGFloat
+    
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
+    }
+}
+
+// MARK: - Scale Button Style
+struct ScaleButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .animation(.spring(response: 0.2, dampingFraction: 0.6), value: configuration.isPressed)
     }
 }
 
@@ -227,26 +377,16 @@ struct ReminderRow: View {
             }
         }
         .padding(.vertical, 4)
+        .contentShape(Rectangle())
     }
     
     private var levelBadge: some View {
         Image(systemName: reminder.notificationLevel.icon)
             .font(.title3)
-            .foregroundStyle(levelColor)
+            .foregroundStyle(reminder.notificationLevel.levelColor)
             .frame(width: 32, height: 32)
-            .background(levelColor.opacity(0.15))
+            .background(reminder.notificationLevel.levelColor.opacity(0.15))
             .clipShape(Circle())
-    }
-    
-    private var levelColor: Color {
-        switch reminder.notificationLevel.color {
-        case "blue": return .blue
-        case "orange": return .orange
-        case "purple": return .purple
-        case "red": return .red
-        case "green": return .green
-        default: return .blue
-        }
     }
 }
 

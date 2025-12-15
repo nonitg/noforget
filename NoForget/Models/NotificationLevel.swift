@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// Represents the four escalating notification intensity levels
 enum NotificationLevel: Int, CaseIterable, Codable, Identifiable {
@@ -46,6 +47,16 @@ enum NotificationLevel: Int, CaseIterable, Codable, Identifiable {
         case .timeSensitive: return "orange"
         case .liveActivity: return "purple"
         case .phoneCall: return "green"
+        }
+    }
+    
+    /// SwiftUI Color for this notification level
+    var levelColor: Color {
+        switch self {
+        case .standard: return .blue
+        case .timeSensitive: return .orange
+        case .liveActivity: return .purple
+        case .phoneCall: return .green
         }
     }
     

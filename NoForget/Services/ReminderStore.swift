@@ -118,6 +118,29 @@ class ReminderStore: ObservableObject {
         try await updateReminder(updated)
     }
     
+    /// Mark reminder as not completed and reschedule notifications
+    func uncompleteReminder(_ reminder: Reminder) async throws {
+        // Only allow if due date is in the future
+        guard reminder.dueDate > Date() else {
+            throw ReminderStoreError.cannotUncomplete
+        }
+        
+        var updated = reminder
+        updated.isCompleted = false
+        updated.modifiedAt = Date()
+        
+        // Update locally
+        guard let index = reminders.firstIndex(where: { $0.id == reminder.id }) else {
+            throw ReminderStoreError.notFound
+        }
+        reminders[index] = updated
+        reminders.sort { $0.dueDate < $1.dueDate }
+        saveToCache()
+        
+        // Reschedule all notifications (including phone calls if applicable)
+        await scheduleForLevel(updated)
+    }
+    
     // MARK: - Notification Scheduling
     
     /// Schedule notification based on reminder level
@@ -212,16 +235,51 @@ class ReminderStore: ObservableObject {
     var completedReminders: [Reminder] {
         reminders.filter { $0.isCompleted }
     }
+    
+    // MARK: - Smart Date Sorting
+    
+    /// Reminders due today (not overdue, not completed)
+    var todayReminders: [Reminder] {
+        reminders.filter {
+            !$0.isCompleted && !$0.isOverdue &&
+            Calendar.current.isDateInToday($0.dueDate)
+        }
+    }
+    
+    /// Reminders due tomorrow
+    var tomorrowReminders: [Reminder] {
+        reminders.filter {
+            !$0.isCompleted &&
+            Calendar.current.isDateInTomorrow($0.dueDate)
+        }
+    }
+    
+    /// Reminders due after tomorrow
+    var laterReminders: [Reminder] {
+        let calendar = Calendar.current
+        let dayAfterTomorrow = calendar.startOfDay(for: Date().addingTimeInterval(86400 * 2))
+        return reminders.filter {
+            !$0.isCompleted && $0.dueDate >= dayAfterTomorrow
+        }
+    }
+    
+    /// Whether to use granular Today/Tomorrow/Later sections (when > 5 upcoming reminders)
+    var shouldUseGranularSections: Bool {
+        upcomingReminders.count > 5
+    }
 }
 
 // MARK: - Errors
 enum ReminderStoreError: LocalizedError {
     case notFound
+    case cannotUncomplete
     
     var errorDescription: String? {
         switch self {
         case .notFound:
             return "Reminder not found"
+        case .cannotUncomplete:
+            return "Cannot uncomplete past reminders"
         }
     }
 }

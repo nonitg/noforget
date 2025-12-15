@@ -128,7 +128,7 @@ struct ReminderListView: View {
             }
         }
         .listStyle(.insetGrouped)
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: store.reminders)
+        .animation(.spring(response: 0.4, dampingFraction: 0.75, blendDuration: 0.1), value: store.reminders)
     }
     
     // MARK: - Section Views
@@ -187,7 +187,6 @@ struct ReminderListView: View {
         Section {
             if isCompletedExpanded {
                 reminderRows(for: store.completedReminders, allowComplete: false, allowUncomplete: true)
-                    .transition(.opacity.combined(with: .move(edge: .top)))
             }
         } header: {
             Button {
@@ -217,41 +216,25 @@ struct ReminderListView: View {
     
     @ViewBuilder
     private func reminderRows(for reminders: [Reminder], allowComplete: Bool, allowUncomplete: Bool) -> some View {
-        ForEach(Array(reminders.enumerated()), id: \.element.id) { index, reminder in
-            VStack(spacing: 0) {
-                ReminderRow(reminder: reminder)
-                    .padding(.vertical, 8)
-                    .onTapGesture {
-                        let selection = UISelectionFeedbackGenerator()
-                        selection.selectionChanged()
-                        selectedReminder = reminder
-                    }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        deleteButton(for: reminder)
-                    }
-                    .swipeActions(edge: .leading, allowsFullSwipe: allowComplete || (allowUncomplete && reminder.dueDate > Date())) {
-                        if allowComplete {
-                            completeButton(for: reminder)
-                        } else if allowUncomplete && reminder.dueDate > Date() {
-                            uncompleteButton(for: reminder)
-                        }
-                    }
-                
-                // Divider between rows (not after last one)
-                if index < reminders.count - 1 {
-                    Divider()
-                        .padding(.leading, 56)
+        ForEach(reminders) { reminder in
+            ReminderRow(reminder: reminder)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    let selection = UISelectionFeedbackGenerator()
+                    selection.selectionChanged()
+                    selectedReminder = reminder
                 }
-            }
-            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
-            .listRowSeparator(.hidden)
-            .listRowBackground(
-                RoundedCornersShape(
-                    corners: cornerMask(for: index, in: reminders),
-                    radius: 10
-                )
-                .fill(Color(.secondarySystemGroupedBackground))
-            )
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    deleteButton(for: reminder)
+                }
+                .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                    if allowComplete {
+                        completeButton(for: reminder)
+                    }
+                    if allowUncomplete && reminder.dueDate > Date() {
+                        uncompleteButton(for: reminder)
+                    }
+                }
         }
     }
     
@@ -349,18 +332,15 @@ struct ReminderRow: View {
                     .strikethrough(reminder.isCompleted)
                     .foregroundStyle(reminder.isCompleted ? .secondary : .primary)
                 
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     Text(reminder.formattedDueDate)
                         .font(.subheadline)
                         .foregroundStyle(reminder.isOverdue ? .red : .secondary)
                     
                     if !reminder.description.isEmpty {
-                        Text("•")
-                            .foregroundStyle(.secondary)
-                        Text(reminder.description)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
+                        Image(systemName: "doc.text")
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
                     }
                 }
             }
@@ -376,7 +356,7 @@ struct ReminderRow: View {
                     .foregroundStyle(.red)
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 6)
         .contentShape(Rectangle())
     }
     

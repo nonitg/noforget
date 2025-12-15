@@ -118,6 +118,13 @@ class ReminderStore: ObservableObject {
         try await updateReminder(updated)
     }
     
+    /// Mark reminder as completed - async work only (for use after local update)
+    func completeReminderAsync(_ reminder: Reminder) async throws {
+        guard let existing = reminders.first(where: { $0.id == reminder.id }) else { return }
+        // Schedule/cancel notifications for the updated reminder
+        await cancelScheduled(existing)
+    }
+    
     /// Mark reminder as not completed and reschedule notifications
     func uncompleteReminder(_ reminder: Reminder) async throws {
         // Only allow if due date is in the future
@@ -139,6 +146,24 @@ class ReminderStore: ObservableObject {
         
         // Reschedule all notifications (including phone calls if applicable)
         await scheduleForLevel(updated)
+    }
+    
+    /// Mark reminder as not completed - async work only (for use after local update)
+    func uncompleteReminderAsync(_ reminder: Reminder) async throws {
+        guard reminder.dueDate > Date() else { return }
+        guard let existing = reminders.first(where: { $0.id == reminder.id }) else { return }
+        // Reschedule notifications for the restored reminder
+        await scheduleForLevel(existing)
+    }
+    
+    /// Update reminder locally with animation support (synchronous)
+    func updateReminderLocally(_ reminder: Reminder) {
+        guard let index = reminders.firstIndex(where: { $0.id == reminder.id }) else { return }
+        var updated = reminder
+        updated.modifiedAt = Date()
+        reminders[index] = updated
+        reminders.sort { $0.dueDate < $1.dueDate }
+        saveToCache()
     }
     
     // MARK: - Notification Scheduling
@@ -263,9 +288,9 @@ class ReminderStore: ObservableObject {
         }
     }
     
-    /// Whether to use granular Today/Tomorrow/Later sections (when > 5 upcoming reminders)
+    /// Whether to use granular Today/Tomorrow/Later sections (when > 3 upcoming reminders)
     var shouldUseGranularSections: Bool {
-        upcomingReminders.count > 5
+        upcomingReminders.count > 3
     }
 }
 
